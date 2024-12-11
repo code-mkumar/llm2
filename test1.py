@@ -3,6 +3,7 @@ import sqlite3
 import pyotp
 import qrcode
 from io import BytesIO
+import json
 import google.generativeai as genai
 # Configure Google Gemini API key
 genai.configure(api_key='AIzaSyD3WqHberJDYyzXkmY1zKaoqd5uCJZDetI')
@@ -93,40 +94,70 @@ def guest_page():
     # Initialize session state
     if 'qa_list' not in st.session_state:
         st.session_state.qa_list = []
+        
     if st.button("Go to Login"):
         st.session_state.page = "login"
+    default,default_sql=read_default_files()
     st.title("Welcome, Guest!")
-    st.write("You can explore the site as a guest, but you'll need to log in for full role based access.")
-    question = st.text_input('Input your question:', key='input')
-    submit = st.button('Ask the question')
-    default,default_sql = read_default_files()
-    if submit:
-        txt=model.generate_content(f"{question} give 1 if the question need sql query or 0")
-        #st.write(txt.text)
-        data = ''
-        if not txt.text == '0':
-            response=model.generate_content(f"{default_sql}\n\n{question}")
-            raw_query = response.text
-            formatted_query = raw_query.replace("sql", "").strip("'''").strip()
-            print("formatted :",formatted_query)
-            single_line_query = " ".join(formatted_query.split()).replace("```", "")
-            # print(single_line_query)
-            # Query the database
-            data = read_sql_query(single_line_query)
-            st.write(data)
-        answer = model.generate_content(f"{default} Answer this question: {question} with results {str(data)} refer the previous answer if need {qa['question']} {qa['answer']}")
-        result_text = answer.candidates[0].content.parts[0].text
+    st.write("You can explore the site as a guest, but you'll need to log in for full role-based access.")
+    
+    # Initialize the name input
+    if 'username' not in st.session_state:
+        st.session_state.username = ''
+    name=''
+    if not st.session_state.username:
+        # Ask for the user's name
+        name = st.text_input('Enter your name:', placeholder='John', key='name')
+        if name:
+            st.session_state.username = name
+            st.write(model.generate_content(f"Introduce yourself: {default}").text)
+    if  st.session_state.username:
+        # Display a welcome message once the name is entered
+        st.write(f"Hello, {st.session_state.username}!")
+
+        # Allow the user to ask a question
+        question = st.text_input('Input your question:', key='input')
+        submit = st.button('Ask the question')
+        
+        if submit and question:
+            txt = model.generate_content(f"{question} give 1 if the question needs an SQL query or 0")
+            data = ''
+            if txt.text.strip() != '0':
+                response = model.generate_content(f"{default_sql}\n\n{question}")
+                raw_query = response.text
+                formatted_query = raw_query.replace("sql", "").strip("'''").strip()
+                single_line_query = " ".join(formatted_query.split()).replace("```", "")
+                data = read_sql_query(single_line_query)
+                st.write(data)
+
+            if st.session_state.qa_list:
+                last_entry = st.session_state.qa_list[-1]
+                last_question = last_entry['question']
+                last_answer = last_entry['answer']
+            else:
+                last_question = "No previous question available."
+                last_answer = "No previous answer available."
+
+            # Format data for readability
+            formatted_data = json.dumps(data, indent=2) if isinstance(data, (dict, list)) else str(data)
+            st.warning(formatted_data)
+
+            # Generate content using the model
+            answer = model.generate_content(
+                f"{name} this is the user name interact with this name"
+                f"{default} Answer this question: {question} with results {formatted_data} make sure on the data. "
+                f"Refer to the previous question and answer if needed only: {last_question} {last_answer}"
+            )
+            result_text = answer.candidates[0].content.parts[0].text
 
             # Store the question and answer in session state
-        st.session_state.qa_list.append({'question': question, 'answer': result_text})
+            st.session_state.qa_list.append({'question': question, 'answer': result_text})
 
-        if st.session_state.qa_list:
+            # Display all previous questions and answers
             for qa in reversed(st.session_state.qa_list):
-        # Display previous questions and answers
                 st.write(f"**Question:** {qa['question']}")
                 st.write(f"**Answer:** {qa['answer']}")
                 st.write("---")
-
 
 #login page
 def login_page():
