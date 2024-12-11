@@ -114,7 +114,7 @@ def guest_page():
             # Query the database
             data = read_sql_query(single_line_query)
             st.write(data)
-        answer = model.generate_content(f"{default} Answer this question: {question} with results {str(data)}")
+        answer = model.generate_content(f"{default} Answer this question: {question} with results {str(data)} refer the previous answer if need {qa['question']} {qa['answer']}")
         result_text = answer.candidates[0].content.parts[0].text
 
             # Store the question and answer in session state
