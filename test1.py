@@ -167,7 +167,7 @@ def guest_page():
             # Generate content using the model
             answer = model.generate_content(
                 f"client name: {name}"
-                f"gernerate the meaningful content for this input {question} must refer this data {default} , {formatted_data}"
+                f"gernerate the meaningful simple content for this input {question} must refer this data {default} , {formatted_data}"
                 f"Refer to the previous question and answer if needed only: {last_question} {last_answer}"
             )
             result_text = answer.candidates[0].content.parts[0].text
