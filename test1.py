@@ -4,6 +4,7 @@ import pyotp
 import qrcode
 from io import BytesIO
 import json
+import os
 import google.generativeai as genai
 # Configure Google Gemini API key
 genai.configure(api_key='AIzaSyD3WqHberJDYyzXkmY1zKaoqd5uCJZDetI')
@@ -89,11 +90,19 @@ def read_admin_files():
         sql_content = sql_file.read()
     return role_content, sql_content
 #data of the previous conversation
-def write_files(data):
+def write_files(data, filename="data.txt"):
     try:
-        with open("data.txt", "a") as file:
-            file.write(json.dumps(data) + "\n")
-        print("Data written successfully.")
+        # Check if the file exists
+        if not os.path.exists(filename):
+            # If the file doesn't exist, create it and write the data
+            with open(filename, "w") as file:
+                file.write(json.dumps(data) + "\n")
+            print("File created and data written successfully.")
+        else:
+            # If the file exists, append the data
+            with open(filename, "a") as file:
+                file.write(json.dumps(data) + "\n")
+            print("Data appended successfully.")
     except Exception as e:
         print("Error writing to file:", str(e))
 # Pages
