@@ -91,20 +91,23 @@ def read_admin_files():
     return role_content, sql_content
 #data of the previous conversation
 def write_files(data, filename="data.txt"):
-    try:
-        # Check if the file exists
-        if not os.path.exists(filename):
-            # If the file doesn't exist, create it and write the data
-            with open("https://github.com/code-mkumar/llm2/blob/main/data.txt", "w") as file:
-                file.write(json.dumps(data) + "\n")
-            print("File created and data written successfully.")
-        else:
-            # If the file exists, append the data
-            with open("https://github.com/code-mkumar/llm2/blob/main/data.txt", "+a") as file:
-                file.write(json.dumps(data) + "\n")
-            print("Data appended successfully.")
-    except Exception as e:
-        print("Error writing to file:", str(e))
+    # try:
+    #     # Check if the file exists
+    #     if not os.path.exists(filename):
+    #         # If the file doesn't exist, create it and write the data
+    #         with open("https://github.com/code-mkumar/llm2/blob/main/data.txt", "w") as file:
+    #             file.write(json.dumps(data) + "\n")
+    #         print("File created and data written successfully.")
+    #     else:
+    #         # If the file exists, append the data
+    #         with open("https://github.com/code-mkumar/llm2/blob/main/data.txt", "+a") as file:
+    #             file.write(json.dumps(data) + "\n")
+    #         print("Data appended successfully.")
+    # except Exception as e:
+    #     print("Error writing to file:", str(e))
+    with open("data.txt",'+a') as file:
+        file.write(json.dumps(data))
+    
 # Pages
 def guest_page():
     # Initialize session state
