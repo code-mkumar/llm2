@@ -129,7 +129,7 @@ def guest_page():
         name = st.text_input('Enter your name:', placeholder='John', key='name')
         if name:
             st.session_state.username = name
-            st.write(model.generate_content(f"Introduce yourself: {default}").text)
+            st.write(model.generate_content(f"user name :{name}"f"Introduce yourself: {default} in two lines").text)
     single_line_query = ""
     if  st.session_state.username:
         # Display a welcome message once the name is entered
@@ -148,7 +148,7 @@ def guest_page():
                 formatted_query = raw_query.replace("sql", "").strip("'''").strip()
                 single_line_query = " ".join(formatted_query.split()).replace("```", "")
                 data = read_sql_query(single_line_query)
-                st.write(data)
+                # st.write(data)
 
             if st.session_state.qa_list:
                 last_entry = st.session_state.qa_list[-1]
@@ -160,7 +160,7 @@ def guest_page():
 
             # Format data for readability
             formatted_data = json.dumps(data, indent=2) if isinstance(data, (dict, list)) else str(data)
-            st.info(formatted_data)
+            # st.info(formatted_data)
 
             # Generate content using the model
             answer = model.generate_content(
@@ -314,7 +314,7 @@ def read_sql_query(sql):
         rows = cur.fetchall()
         conn.commit()
         conn.close()
-        st.write(rows)
+        # st.write(rows)
         return rows
     except Exception as e:
         #print(sql)
