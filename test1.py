@@ -88,6 +88,9 @@ def read_admin_files():
     with open("admin_sql.txt", "r") as sql_file:
         sql_content = sql_file.read()
     return role_content, sql_content
+def write_files(data):
+    with open("data.txt", "a") as file:
+        file.write(data)
 
 # Pages
 def guest_page():
@@ -140,7 +143,7 @@ def guest_page():
 
             # Format data for readability
             formatted_data = json.dumps(data, indent=2) if isinstance(data, (dict, list)) else str(data)
-            st.warning(formatted_data)
+            st.info(formatted_data)
 
             # Generate content using the model
             answer = model.generate_content(
@@ -152,7 +155,7 @@ def guest_page():
 
             # Store the question and answer in session state
             st.session_state.qa_list.append({'question': question, 'answer': result_text})
-
+            write_files({'query':single_line_query,'data':data,'question': question, 'answer': result_text})
             # Display all previous questions and answers
             for qa in reversed(st.session_state.qa_list):
                 st.write(f"**Question:** {qa['question']}")
