@@ -88,10 +88,14 @@ def read_admin_files():
     with open("admin_sql.txt", "r") as sql_file:
         sql_content = sql_file.read()
     return role_content, sql_content
+#data of the previous conversation
 def write_files(data):
-    with open("data.txt", "a") as file:
-        file.write(json.dumps(data) + "\n")
-
+    try:
+        with open("data.txt", "a") as file:
+            file.write(json.dumps(data) + "\n")
+        print("Data written successfully.")
+    except Exception as e:
+        print("Error writing to file:", str(e))
 # Pages
 def guest_page():
     # Initialize session state
