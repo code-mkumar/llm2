@@ -95,12 +95,12 @@ def write_files(data, filename="data.txt"):
         # Check if the file exists
         if not os.path.exists(filename):
             # If the file doesn't exist, create it and write the data
-            with open("data.txt", "w") as file:
+            with open("https://github.com/code-mkumar/llm2/blob/main/data.txt", "w") as file:
                 file.write(json.dumps(data) + "\n")
             print("File created and data written successfully.")
         else:
             # If the file exists, append the data
-            with open("data.txt", "+a") as file:
+            with open("https://github.com/code-mkumar/llm2/blob/main/data.txt", "+a") as file:
                 file.write(json.dumps(data) + "\n")
             print("Data appended successfully.")
     except Exception as e:
