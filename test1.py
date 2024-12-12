@@ -90,7 +90,7 @@ def read_admin_files():
     return role_content, sql_content
 def write_files(data):
     with open("data.txt", "a") as file:
-        file.write(json.dumps(data)+"\n")
+        file.write(json.dumps(data) + "\n")
 
 # Pages
 def guest_page():
