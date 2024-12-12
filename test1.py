@@ -131,7 +131,7 @@ def guest_page():
         if name:
             st.session_state.username = name
             greetings=model.generate_content(f"user name :{name}"f"Introduce yourself: {default} in two lines").text
-            st.write(greetings)
+            # st.write(greetings)
     single_line_query = ""
     if  st.session_state.username:
         # Display a welcome message once the name is entered
