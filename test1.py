@@ -124,16 +124,18 @@ def guest_page():
     if 'username' not in st.session_state:
         st.session_state.username = ''
     name=''
+    greetings=''
     if not st.session_state.username:
         # Ask for the user's name
         name = st.text_input('Enter your name:', placeholder='John', key='name')
         if name:
             st.session_state.username = name
-            st.write(model.generate_content(f"user name :{name}"f"Introduce yourself: {default} in two lines").text)
+            greetings=model.generate_content(f"user name :{name}"f"Introduce yourself: {default} in two lines").text
+            st.write()
     single_line_query = ""
     if  st.session_state.username:
         # Display a welcome message once the name is entered
-        st.write(f"Hello, {st.session_state.username}!")
+        st.write(greetings)
 
         # Allow the user to ask a question
         question = st.text_input('Input your question:', key='input')
