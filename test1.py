@@ -319,7 +319,7 @@ def read_sql_query(sql):
 
 def welcome_page():
     secret, role, name = get_user_details(st.session_state.user_id)
-    # st.write(name)
+    st.write(secret)
     with st.sidebar:
 
         if st.button("Logout"):
