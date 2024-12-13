@@ -94,7 +94,7 @@ def guest_page():
     # Initialize session state
     if 'qa_list' not in st.session_state:
         st.session_state.qa_list = []
-    st.write("helo")
+    # st.write("helo")
     with st.sidebar:
         if st.button("Go to Login"):
             st.session_state.page = "login"
