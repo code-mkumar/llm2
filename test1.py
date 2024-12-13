@@ -20,7 +20,8 @@ def generate_secret_code(user_id):
     conn = create_connection()
     cursor = conn.cursor()
     secret = pyotp.random_base32()  # Generate a TOTP secret
-    cursor.execute("UPDATE user_detail SET secret_code = ? WHERE id = ?", (secret, user_id))
+    
+    # st.write(g)
     conn.commit()
     conn.close()
     return secret
@@ -53,10 +54,11 @@ def verify_otp(secret, otp):
     return totp.verify(otp)
 
 # Update the multifactor status in the database
-def update_multifactor_status(user_id, status):
+def update_multifactor_status(user_id, status,secret):
     conn = create_connection()
     cursor = conn.cursor()
     cursor.execute("UPDATE user_detail SET multifactor = ? WHERE id = ?", (status, user_id))
+    cursor.execute("UPDATE user_detail SET secret_code = ? WHERE id = ?", (secret, user_id))
     conn.commit()
     conn.close()
 
@@ -225,7 +227,7 @@ def qr_setup_page():
     otp = st.text_input("Enter OTP from Authenticator App", type="password")
     if st.button("Verify OTP"):
         if verify_otp(secret, otp):
-            update_multifactor_status(user_id, 1)  # Update MFA status in the database
+            update_multifactor_status(user_id, 1,secret)  # Update MFA status in the database
             st.session_state.multifactor = 1
             _, role, name = get_user_details(user_id)
             st.session_state.id=user_id
@@ -260,7 +262,7 @@ def otp_verification_page():
 
     otp = st.text_input("Enter OTP", type="password")
     if st.button("Verify"):
-        if not verify_otp(secret, otp):
+        if  verify_otp(secret, otp):
             st.success("OTP Verified! Welcome.")
             
             if role == "student":
