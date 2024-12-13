@@ -20,7 +20,6 @@ def generate_secret_code(user_id):
     conn = create_connection()
     cursor = conn.cursor()
     secret = pyotp.random_base32()  # Generate a TOTP secret
-    cursor.execute("UPDATE user_detail SET secret_code = ? WHERE id = ?", (secret, user_id))
     conn.commit()
     conn.close()
     return secret
@@ -226,6 +225,8 @@ def qr_setup_page():
     if st.button("Verify OTP"):
         if verify_otp(secret, otp):
             update_multifactor_status(user_id, 1)  # Update MFA status in the database
+            g=cursor.execute("UPDATE user_detail SET secret_code = ? WHERE id = ?", (secret, user_id))
+            st.write(g)
             st.session_state.multifactor = 1
             _, role, name = get_user_details(user_id)
             st.session_state.id=user_id
