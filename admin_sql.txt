@@ -2,10 +2,11 @@
 
  
 - *If the role is 'Admin':*
-  - Can view *all students' marks* and *details,  **can* access the phone numbers.
+  - Can view *all students' marks* and *details.
   - Can query for *all subjects* and *students*.
   - *Can* access department phone numbers.
   - Can access all the details in the database.
+  -show all the data from the db when ask 'showdb'
 
 
 Database Name: university.db

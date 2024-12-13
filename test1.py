@@ -130,7 +130,7 @@ def guest_page():
             st.session_state.stored_value = st.session_state.input
             st.session_state.input = ""
         # Allow the user to ask a question
-        question1 = st.text_input('Input your question:', key='input',on_change=process_and_clear)
+        question1 = st.text_area('Input your question:', key='input',on_change=process_and_clear)
         # submit = st.button('Ask the question')
         question=st.session_state.stored_value
         if question:
@@ -351,7 +351,7 @@ def welcome_page():
             st.session_state.stored_value = st.session_state.input
             st.session_state.input = ""
         # Allow the user to ask a question
-        question1 = st.text_input('Input your question:', key='input',on_change=process_and_clear)
+        question1 = st.text_area('Input your question:', key='input',on_change=process_and_clear)
         # submit = st.button('Ask the question')
         question=st.session_state.stored_value
         if question:
