@@ -94,9 +94,15 @@ def guest_page():
     # Initialize session state
     if 'qa_list' not in st.session_state:
         st.session_state.qa_list = []
+    with st.sidebar:
+
+        if st.button("Go to Login"):
+            st.session_state.page = "login"
+        for qa in reversed(st.session_state.qa_list):
+                st.write(f"**Question:** {qa['question']}")
+                st.write(f"**Answer:** {qa['answer']}")
+                st.write("---")
         
-    if st.button("Go to Login"):
-        st.session_state.page = "login"
     default,default_sql=read_default_files()
     st.title("Welcome, Guest!")
     st.write("You can explore the site as a guest, but you'll need to log in for full role-based access.")
@@ -105,6 +111,7 @@ def guest_page():
     if 'username' not in st.session_state:
         st.session_state.username = ''
     name=''
+    
     if not st.session_state.username:
         # Ask for the user's name
         name = st.text_input('Enter your name:', placeholder='John', key='name')
@@ -114,12 +121,19 @@ def guest_page():
     if  st.session_state.username:
         # Display a welcome message once the name is entered
         st.write(f"Hello, {st.session_state.username}!")
+        if "input" not in st.session_state:
+            st.session_state.input = ""
+        if "stored_value" not in st.session_state:
+            st.session_state.stored_value = ""
 
+        def process_and_clear():
+            st.session_state.stored_value = st.session_state.input
+            st.session_state.input = ""
         # Allow the user to ask a question
-        question = st.text_input('Input your question:', key='input')
-        submit = st.button('Ask the question')
-        
-        if submit and question:
+        question1 = st.text_input('Input your question:', key='input',on_change=process_and_clear)
+        # submit = st.button('Ask the question')
+        question=st.session_state.stored_value
+        if question:
             txt = model.generate_content(f"{question} give 1 if the question needs an SQL query or 0")
             data = ''
             if txt.text.strip() != '0':
@@ -128,36 +142,36 @@ def guest_page():
                 formatted_query = raw_query.replace("sql", "").strip("'''").strip()
                 single_line_query = " ".join(formatted_query.split()).replace("```", "")
                 data = read_sql_query(single_line_query)
-                st.write(data)
+                # st.write(data)
 
             if st.session_state.qa_list:
                 last_entry = st.session_state.qa_list[-1]
                 last_question = last_entry['question']
                 last_answer = last_entry['answer']
+                # st.write(last_answer,last_question)
             else:
                 last_question = "No previous question available."
                 last_answer = "No previous answer available."
 
             # Format data for readability
             formatted_data = json.dumps(data, indent=2) if isinstance(data, (dict, list)) else str(data)
-            st.warning(formatted_data)
+            # st.warning(formatted_data)
 
             # Generate content using the model
             answer = model.generate_content(
                 f"{name} this is the user name interact with this name"
                 f"{default} Answer this question: {question} with results {formatted_data} make sure on the data. "
-                f"Refer to the previous question and answer if needed only: {last_question} {last_answer}"
+                # f"Refer to the previous question and answer if needed only: {last_question} {last_answer}"
             )
             result_text = answer.candidates[0].content.parts[0].text
 
             # Store the question and answer in session state
             st.session_state.qa_list.append({'question': question, 'answer': result_text})
 
-            # Display all previous questions and answers
-            for qa in reversed(st.session_state.qa_list):
-                st.write(f"**Question:** {qa['question']}")
-                st.write(f"**Answer:** {qa['answer']}")
-                st.write("---")
+            # Display  questions and answers
+            st.markdown(question)
+            st.markdown(result_text)
+            
 
 #login page
 def login_page():
@@ -175,7 +189,7 @@ def login_page():
         if user:
             st.session_state.authenticated = True
             st.session_state.user_id = user_id
-            st.session_state.multifactor = user[7]  # Multifactor column
+            st.session_state.multifactor = user[8]  # Multifactor column
             st.session_state.secret = user[9]  # Secret code column
             st.success("Login successful!")
             if st.session_state.multifactor == 1:
@@ -194,7 +208,7 @@ def login_page():
 def qr_setup_page():
     st.title("Setup Multifactor Authentication")
     user_id = st.session_state.user_id
-
+    
     if st.session_state.secret == "None":
         # Generate a new secret
         secret = generate_secret_code(user_id)
@@ -210,7 +224,7 @@ def qr_setup_page():
     # Immediate OTP verification
     otp = st.text_input("Enter OTP from Authenticator App", type="password")
     if st.button("Verify OTP"):
-        if not verify_otp(secret, otp):
+        if verify_otp(secret, otp):
             update_multifactor_status(user_id, 1)  # Update MFA status in the database
             st.session_state.multifactor = 1
             _, role, name = get_user_details(user_id)
@@ -238,16 +252,17 @@ def qr_setup_page():
 def otp_verification_page():
     st.title("Verify OTP")
     user_id = st.session_state.user_id
-    secret = st.session_state.secret
+    secret, role, name = get_user_details(user_id)
+    st.session_state.id=user_id
+    st.session_state.role = role
+    st.session_state.name = name
+    
 
     otp = st.text_input("Enter OTP", type="password")
     if st.button("Verify"):
         if not verify_otp(secret, otp):
             st.success("OTP Verified! Welcome.")
-            _, role, name = get_user_details(user_id)
-            st.session_state.id=user_id
-            st.session_state.role = role
-            st.session_state.name = name
+            
             if role == "student":
                 role_content, sql_content = read_student_files()
                 st.session_state.role_content = role_content
@@ -271,9 +286,10 @@ def create_combined_prompt(question, sql_prompt):
 # Function to interact with the Google Gemini model
 def get_gemini_response(combined_prompt):
     response = model.generate_content(combined_prompt)
-    print(response)
+    # print(response)
+    id = st.session_state.id
     try:
-        final = model.generate_content(f"{response.text} if any user_id word found in this statement replace with {st.session_state.id}")
+        final = model.generate_content(f"{response.text} if any user_id word found in this statement replace with {id}")
         #final=model.generate_content(response.text)
     except:
         return "please contact to the staff or admin"
@@ -294,7 +310,7 @@ def read_sql_query(sql):
         rows = cur.fetchall()
         conn.commit()
         conn.close()
-        st.write(rows)
+        # st.write(rows)
         return rows
     except Exception as e:
         #print(sql)
@@ -302,12 +318,20 @@ def read_sql_query(sql):
         return f"SQLite error: {e}"
 
 def welcome_page():
-    if st.button("Logout"):
-        st.session_state.authenticated = False
-        st.session_state.page = "login"
+    secret, role, name = get_user_details(st.session_state.user_id)
+    # st.write(name)
+    with st.sidebar:
+
+        if st.button("Logout"):
+            st.session_state.authenticated = False
+            st.session_state.page = "login"
+        for qa in reversed(st.session_state.qa_list):
+                st.write(f"**Question:** {qa['question']}")
+                st.write(f"**Answer:** {qa['answer']}")
+                st.write("---")
     st.title("Welcome to the ANJAC AI")
-    st.write(f"Hello, {st.session_state.name}!")
-    if st.session_state.role:
+    st.write(f"Hello, {name}!")
+    if role:
         # Initialize session state
         if 'qa_list' not in st.session_state:
             st.session_state.qa_list = []
@@ -315,18 +339,27 @@ def welcome_page():
         # st.text(st.session_state.role_content)
         # st.header(f"{st.session_state.role} SQL Content:")
         # st.text(st.session_state.sql_content)
-        role = st.session_state.role
+        # role = st.session_state.role
         role_prompt=st.session_state.role_content
         sql_content = st.session_state.sql_content
-        question = st.text_input('Input your question:', key='input')
-        submit = st.button('Ask the question')
+        if "input" not in st.session_state:
+            st.session_state.input = ""
+        if "stored_value" not in st.session_state:
+            st.session_state.stored_value = ""
 
-        if submit:
+        def process_and_clear():
+            st.session_state.stored_value = st.session_state.input
+            st.session_state.input = ""
+        # Allow the user to ask a question
+        question1 = st.text_input('Input your question:', key='input',on_change=process_and_clear)
+        # submit = st.button('Ask the question')
+        question=st.session_state.stored_value
+        if question:
             combined_prompt = create_combined_prompt(question, sql_content)
             response = get_gemini_response(combined_prompt)
 
             # Display the SQL query
-            st.write("Generated SQL Query:", response)
+            # st.write("Generated SQL Query:", response)
             raw_query = response
             formatted_query = raw_query.replace("sql", "").strip("'''").strip()
             # print("formatted :",formatted_query)
@@ -345,7 +378,7 @@ def welcome_page():
                 # Display any errors
                 pass
             # Generate response for the question and answer
-            answer = model.generate_content(f"student name :{st.session_state.name} role:{role} prompt:{role_prompt} Answer this question: {question} with results {str(data)}")
+            answer = model.generate_content(f"student name :{name} role:{role} prompt:{role_prompt} Answer this question: {question} with results {str(data)}")
             result_text = answer.candidates[0].content.parts[0].text
 
             # Store the question and answer in session state
