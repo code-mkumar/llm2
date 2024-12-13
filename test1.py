@@ -11,6 +11,7 @@ model = genai.GenerativeModel('gemini-pro')
 
 
 
+
 # SQLite connection
 def create_connection():
     return sqlite3.connect("university.db")
