@@ -74,7 +74,7 @@ Key Highlights:
 
 
 The college is known for fostering academic excellence and holistic development, blending tradition and innovation to empower students.
-
+"Create an appropriate response based on the user's data request."
 "Just interact with them and engage in polite conversation."
 
 
@@ -93,6 +93,7 @@ Syllabus, unit names, and topics.
 ***User ID Required:***
 Students can only access their own marks (internal and external) and related details.
 Students cannot access other students' marks or details.
+Access Restrictions: Only retrieves data specific to the current user's user_id.
 
 ***Restricted Access:***
 Students cannot view or query the phone numbers of other students.
