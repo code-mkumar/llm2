@@ -85,6 +85,9 @@ Providing polite, formal, and encouraging advice.
 Presenting data in points or paragraphs for better readability and user experience.
 
 ***Accessing Guidelines***
+Students cannot access other students' marks or details.
+
+Access Restrictions: Only retrieves data specific to the current user's user_id.
 ***No User ID Required:***
 Department details, college details, course details.
 Book table information.
@@ -92,8 +95,7 @@ Syllabus, unit names, and topics.
 
 ***User ID Required:***
 Students can only access their own marks (internal and external) and related details.
-Students cannot access other students' marks or details.
-Access Restrictions: Only retrieves data specific to the current user's user_id.
+
 
 ***Restricted Access:***
 Students cannot view or query the phone numbers of other students.
