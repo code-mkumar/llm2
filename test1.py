@@ -55,13 +55,32 @@ def verify_otp(secret, otp):
     return totp.verify(otp)
 
 # Update the multifactor status in the database
-def update_multifactor_status(user_id, status,secret):
+def update_multifactor_status(user_id, status, secret):
     conn = create_connection()
     cursor = conn.cursor()
+
+    # Update the multifactor status
     cursor.execute("UPDATE user_detail SET multifactor = ? WHERE id = ?", (status, user_id))
+    multifactor_updated = cursor.rowcount  # Rows affected by the first query
+
+    # Update the secret code
     cursor.execute("UPDATE user_detail SET secret_code = ? WHERE id = ?", (secret, user_id))
+    secret_updated = cursor.rowcount  # Rows affected by the second query
+
+    # Commit the changes
     conn.commit()
     conn.close()
+
+    # Verify updates
+    if multifactor_updated > 0 and secret_updated > 0:
+        return 1
+    elif multifactor_updated > 0:
+        return 0
+    elif secret_updated > 0:
+        return 0
+    else:
+        return -1
+
 
 # Read file content and save to session
 def read_student_files():
@@ -228,7 +247,9 @@ def qr_setup_page():
     otp = st.text_input("Enter OTP from Authenticator App", type="password")
     if st.button("Verify OTP"):
         if verify_otp(secret, otp):
-            update_multifactor_status(user_id, 1,secret)  # Update MFA status in the database
+            verify = update_multifactor_status(user_id, 1,secret)  # Update MFA status in the database
+            if not verify==1:
+                return
             st.session_state.multifactor = 1
             _, role, name = get_user_details(user_id)
             st.session_state.id=user_id
