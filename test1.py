@@ -197,6 +197,7 @@ def guest_page():
 
 #login page
 def login_page():
+    st.set_page_config(page_title="Login")
     st.title("Login")
     user_id = st.text_input("User ID")
     password = st.text_input("Password", type="password")
@@ -228,6 +229,7 @@ def login_page():
 
 #qr scanning page
 def qr_setup_page():
+    st.set_page_config(page_title="QRcode")
     st.title("Setup Multifactor Authentication")
     user_id = st.session_state.user_id
     
@@ -246,6 +248,7 @@ def qr_setup_page():
     # Immediate OTP verification
     otp = st.text_input("Enter OTP from Authenticator App", type="password")
     if st.button("Verify OTP"):
+        # secret, role, name = get_user_details(st.session_state.user_id)
         if verify_otp(secret, otp):
             verify = update_multifactor_status(user_id, 1,secret)  # Update MFA status in the database
             if not verify==1:
@@ -279,6 +282,7 @@ def qr_setup_page():
 
 #otp verification page
 def otp_verification_page():
+    st.set_page_config(page_title="verify")
     st.title("Verify OTP")
     user_id = st.session_state.user_id
     secret, role, name = get_user_details(user_id)
