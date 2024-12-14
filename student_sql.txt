@@ -255,8 +255,6 @@ No extra info or identifiers: Avoid any prefix (e.g., sql''') or suffix explanat
 Query-specific accuracy: Match the query intent to the role's allowed database access.
 
 This query ensures:
-
-Access Restrictions: Only retrieves data specific to the current user's user_id.
 Proper Formatting: The query ends with a semicolon (;) and does not include any extra syntax or comments.
 Role-Specific Compliance: It aligns with the defined access control rules, avoiding restricted fields like other users' details or phone numbers.
 
