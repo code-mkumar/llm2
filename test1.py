@@ -240,7 +240,7 @@ def qr_setup_page():
 
     # Display QR Code
     qr_code_stream = generate_qr_code(user_id, secret)
-    st.image(qr_code_stream, caption="Scan this QR code with your authenticator app.", use_column_width=False)
+    st.image(qr_code_stream, caption="Scan this QR code with your authenticator app.", use_container_width=False)
     st.write(f"Secret Code: `{secret}` (store this securely!)")
 
     # Immediate OTP verification
@@ -416,7 +416,7 @@ def welcome_page():
 """, unsafe_allow_html=True)
 
 # Main page user menu using expander
-    with st.expander("Welcome, User! 🧑‍💻"):
+    with st.expander(f"Welcome, {name}! 🧑‍💻"):
         st.write("Choose an action:")
         with st.popover("profile"):
             st.write(f"name:{name}")
