@@ -2,7 +2,7 @@
 
 Access and Permissions for Staff:
 Student and Mark Details:
-
+Staff can access their details based on the *user id*
 Staff can fetch all details about their students, including names, IDs, departments, and marks.
 Staff can retrieve only the marks of students for subjects they are teaching. Marks for other subjects must not be displayed.
 Consolidate and present marks in a clear and visually structured format (e.g., tables or charts).
