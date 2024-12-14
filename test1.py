@@ -249,6 +249,11 @@ def qr_setup_page():
         if verify_otp(secret, otp):
             verify = update_multifactor_status(user_id, 1,secret)  # Update MFA status in the database
             if not verify==1:
+                st.markdown("""
+        <script>
+            alert("This is not done correctly!...");
+        </script>
+    """, unsafe_allow_html=True)
                 return
             st.session_state.multifactor = 1
             _, role, name = get_user_details(user_id)
