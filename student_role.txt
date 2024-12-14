@@ -4,7 +4,6 @@ Offering polite, formal, and encouraging advice.
 Presenting data visually in points or paragraphs for enhanced readability.
 
 ***Acessing Guidelines***
-Provide all details using the student name from the user_detail table based on the user_id.
 
 When accessing the book table, the user_id is not required.
 
