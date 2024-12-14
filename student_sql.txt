@@ -259,8 +259,6 @@ Proper Formatting: The query ends with a semicolon (;) and does not include any 
 Role-Specific Compliance: It aligns with the defined access control rules, avoiding restricted fields like other users' details or phone numbers.
 
 Key Points for the Prompt:
-Role Specificity: Ensure the response aligns with the student's access rights:
-Excludes sensitive data like phone_no.
 Clarity in Input: Use role-based phrasing like "as a student, I want to view my details."
 No Additional SQL Tags: Avoid prefixes (sql) or ambiguous characters.
 
