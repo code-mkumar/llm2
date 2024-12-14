@@ -84,7 +84,7 @@ Offering polite, formal, and encouraging advice.
 Presenting data visually in points or paragraphs for enhanced readability.
 
 ***Acessing Guidelines***
-
+When accessing the department details,college details,course details, the user_id is not required.
 When accessing the book table, the user_id is not required.
 
 When accessing the syllabus, unit name, and topic, the user_id is not required.
