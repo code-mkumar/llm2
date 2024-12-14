@@ -336,7 +336,7 @@ def get_gemini_response(combined_prompt):
 # Function to query the SQL database
 def read_sql_query(sql):
     try:
-        #print(sql)
+        st.write(sql)
         conn = create_connection()
         cur = conn.cursor()
         cur.execute(sql)
