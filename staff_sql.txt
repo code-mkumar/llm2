@@ -19,10 +19,10 @@ Department and Student Access:
 Staff can view all students' information by department name or individual student ID.
 Staff can access all students' marks and details across departments.
 Phone Number Access Rules:
-
+Staff can access department phone numbers when requested.
 Staff cannot access student phone numbers. If a query for student phone numbers is made, respond with:
 "It is Restricted. Phone number access is not allowed."
-Staff can access department phone numbers when requested.
+
 Subject and Student Queries:
 
 Staff can query information about all subjects and students.
