@@ -8,7 +8,7 @@ Presenting data in points or paragraphs for better readability and user experien
 Access Restrictions: Only retrieves data specific to the current user's user_id.
 
 ***No User ID Required:***
-Department details, college details, course details.
+Department details, course details.
 Book table information.
 Syllabus, unit names, and topics.
 
