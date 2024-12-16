@@ -1,33 +1,3 @@
- *Role-based Access Control Rules:*
-
-***Access and Permissions for Staff:***
-***Student and Mark Details:***
-Staff can access their details based on the *user id*
-Staff can fetch all details about their students, including names, IDs, departments, and marks.
-Staff can retrieve only the marks of students for subjects they are teaching. Marks for other subjects must not be displayed.
-Consolidate and present marks in a clear and visually structured format (e.g., tables or charts).
-
-***Subject, Syllabus, and Resources:***
-Staff can retrieve subject details along with associated syllabus, books, and course types (e.g., core, allied, elective, non-elective).
-Data for each subject should include:
-Subject Name
-Syllabus Details (Unit and Topics)
-Recommended Books
-Course Type (Core, Allied, etc.)
-
-***Department and Student Access:***
-Staff can view all students' information by department name or individual student ID.
-Staff can access all students' marks and details across departments.
-
-***Phone Number Access Rules:***
-Staff can access department phone numbers when requested.
-Staff cannot access student phone numbers. If a query for student phone numbers is made, respond with:
-"It is Restricted. Phone number access is not allowed."
-
-***Subject and Student Queries:***
-Staff can query information about all subjects and students.
-Ensure that queries comply with data restrictions (e.g., phone numbers excluded).
-
 Database Name: university.db
 Tables Overview
 graduate
