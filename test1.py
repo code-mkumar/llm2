@@ -314,17 +314,24 @@ def otp_verification_page():
 
 #just for combining
 def create_combined_prompt(question, sql_prompt):
+    # Define keywords for user-specific queries
+    user_specific_keywords = ["my department", "my course", "my details", "give me"]
+
     # Define keywords for non-user-specific queries
     general_keywords = [
         "department names", "course names", "college history", 
         "programmes of study", "infrastructure", "placement", "facilities"
     ]
 
-    # Check if the question matches any general keyword
-    if any(keyword in question.lower() for keyword in general_keywords):
+    # Check if the question matches user-specific keywords
+    if any(keyword in question.lower() for keyword in user_specific_keywords):
+        return f"{sql_prompt}\n\nWrite a query to fetch the relevant information using user_id='{st.session_state.id}'.\n\nQuestion: {question}\n\n"
+
+    # Check if the question matches general keywords
+    elif any(keyword in question.lower() for keyword in general_keywords):
         return f"{sql_prompt}\n\nWrite a query to fetch the relevant information without using user_id or any specific filters.\n\nQuestion: {question}\n\n"
 
-    # Default behavior for user-specific queries
+    # Default behavior
     return f"{sql_prompt}\n\n{question}\n\n"
 
 
@@ -332,6 +339,17 @@ def create_combined_prompt(question, sql_prompt):
 def get_gemini_response(combined_prompt):
     response = model.generate_content(combined_prompt)
     # print(response)
+    query=response.text
+    # Add user_id for personal queries if not already included
+    if "my" in combined_prompt.lower() and "user_id" not in query.lower():
+        query = query.strip(";") + f" WHERE user_id='{st.session_state.id}';"
+
+    # Remove unnecessary user_id filters for general queries
+    general_contexts = ["department names", "course names", "college history", "programmes of study"]
+    if any(context in combined_prompt.lower() for context in general_contexts):
+        query = re.sub(r"WHERE\s+user_id\s*=\s*['\"]\w+['\"]", "", query, flags=re.IGNORECASE)
+
+    return query
     id = st.session_state.id
     try:
         final = model.generate_content(f"{response.text} if any user_id word found in this statement replace with {id}")
