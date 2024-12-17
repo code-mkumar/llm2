@@ -314,7 +314,19 @@ def otp_verification_page():
 
 #just for combining
 def create_combined_prompt(question, sql_prompt):
-    return f"{sql_prompt}\n\n{question}\n\n "
+    # Define keywords for non-user-specific queries
+    general_keywords = [
+        "department names", "course names", "college history", 
+        "programmes of study", "infrastructure", "placement", "facilities"
+    ]
+
+    # Check if the question matches any general keyword
+    if any(keyword in question.lower() for keyword in general_keywords):
+        return f"{sql_prompt}\n\nWrite a query to fetch the relevant information without using user_id or any specific filters.\n\nQuestion: {question}\n\n"
+
+    # Default behavior for user-specific queries
+    return f"{sql_prompt}\n\n{question}\n\n"
+
 
 # Function to interact with the Google Gemini model
 def get_gemini_response(combined_prompt):
