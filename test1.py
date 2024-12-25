@@ -218,6 +218,7 @@ def login_page():
             st.success("Login successful!")
             if st.session_state.multifactor == 1:
                 st.session_state.page = "otp_verification"  # Direct to OTP verification if MFA is enabled
+                st.rerun()
             else:
                 if st.session_state.secret == "None":
                     st.session_state.page = "qr_setup"  # If MFA is not enabled, show QR setup
