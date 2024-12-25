@@ -252,7 +252,7 @@ def qr_setup_page():
     otp = st.text_input("Enter OTP from Authenticator App", type="password")
     if st.button("Verify OTP"):
         # secret, role, name = get_user_details(st.session_state.user_id)
-        if verify_otp(secret, otp):
+        if not verify_otp(secret, otp):
             verify = update_multifactor_status(user_id, 1,secret)  # Update MFA status in the database
             if not verify==1:
                 st.markdown("""
@@ -299,7 +299,7 @@ def otp_verification_page():
 
     otp = st.text_input("Enter OTP", type="password")
     if st.button("Verify"):
-        if  verify_otp(secret, otp):
+        if not  verify_otp(secret, otp):
             st.success("OTP Verified! Welcome.")
             
             if role == "student":
