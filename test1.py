@@ -120,6 +120,7 @@ def guest_page():
     with st.sidebar:
         if st.button("Go to Login"):
             st.session_state.page = "login"
+            st.rerun()
         for qa in reversed(st.session_state.qa_list):
                 st.write(f"**Question:** {qa['question']}")
                 st.write(f"**Answer:** {qa['answer']}")
@@ -220,8 +221,10 @@ def login_page():
             else:
                 if st.session_state.secret == "None":
                     st.session_state.page = "qr_setup"  # If MFA is not enabled, show QR setup
+                    st.rerun()
                 else:
                     st.session_state.page = "otp_verification"  # Otherwise show OTP verification
+                    st.rerun()
         else:
             st.error("Invalid credentials.")
     if st.button("Visit as Guest"):
@@ -275,8 +278,11 @@ def qr_setup_page():
                 role_content,sql_content = read_admin_files()
                 st.session_state.role_content = role_content
                 st.session_state.sql_content = sql_content
+                st.session_state.page = "admin"
+                st.rerun()
             st.success("Multifactor authentication is now enabled.")
             st.session_state.page = "welcome"
+            st.rerun()
         else:
             st.error("Invalid OTP. Try again.")
 
@@ -308,7 +314,10 @@ def otp_verification_page():
                 role_content,sql_content = read_admin_files()
                 st.session_state.role_content = role_content
                 st.session_state.sql_content = sql_content
+                st.session_state.page = "admin"
+                st.rerun()
             st.session_state.page = "welcome"
+            st.rerun()
         else:
             st.error("Invalid OTP. Try again.")
 
@@ -467,6 +476,7 @@ def welcome_page():
         if st.button("🚪 Logout"):
             st.session_state.authenticated = False
             st.session_state.page = "login"
+            st.rerun()
 
     # Main page content
     st.title("Welcome to the ANJAC AI")
@@ -531,6 +541,88 @@ def welcome_page():
                     st.write(f"**Question:** {qa['question']}")
                     st.write(f"**Answer:** {qa['answer']}")
                     st.write("---")
+def admin_page():
+    st.set_page_config(page_title="Admin Dashboard", layout="wide")
+    secret, role, name = get_user_details(st.session_state.user_id)
+
+    # Sidebar content
+    with st.sidebar:
+        st.header("Admin Modules")
+        module = st.radio(
+            "Select Module",
+            options=["File Upload and Edit", "Database Setup", "Query Area", "Logout"]
+        )
+
+    # Inject custom CSS for styling
+    st.markdown("""
+    <style>
+    .stExpander {
+        position: fixed;
+        top: 70px;
+        right: 10px;
+        width: 200px !important;
+        z-index: 9999;
+    }
+    .stExpander > div > div {
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .stButton button {
+        width: 90%;
+        margin: 5px auto;
+        display: block;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        border: none;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    .stButton button:hover {
+        background-color: #0056b3;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Main page content
+    st.title("Admin Dashboard")
+    st.write(f"Welcome, {name}! 👋")
+
+    if module == "File Upload and Edit":
+        st.subheader("File Upload and Edit Module")
+        uploaded_file = st.file_uploader("Upload a PDF, Word, or Text file", type=["pdf", "docx", "txt"])
+        if uploaded_file:
+            file_content = uploaded_file.read().decode('utf-8')
+            edited_content = st.text_area("Edit File Content", value=file_content, height=300)
+            if st.button("Save File"):
+                with open("edited_file.txt", "w") as f:
+                    f.write(edited_content)
+                st.success("File content saved successfully!")
+
+    elif module == "Database Setup":
+        st.subheader("Database Setup Module")
+        st.write("Set up the database for students and staff.")
+        db_name = st.text_input("Enter Database Name")
+        admin_username = st.text_input("Enter Admin Username")
+        admin_password = st.text_input("Enter Admin Password", type="password")
+        if st.button("Setup Database"):
+            # Add actual DB setup logic here
+            st.success(f"Database '{db_name}' setup completed!")
+
+    elif module == "Query Area":
+        st.subheader("Query Area Module")
+        query = st.text_area("Enter your SQL query")
+        if st.button("Execute Query"):
+            # Add query execution logic here
+            st.success(f"Executed query: {query}")
+
+    elif module == "Logout":
+        st.session_state.authenticated = False
+        st.session_state.page = "login"
+        st.success("Logged out successfully!")
+        st.rerun()
 
     
 
@@ -566,6 +658,8 @@ def app():
         otp_verification_page()
     elif st.session_state.page == "welcome":
         welcome_page()
+    elif st.session_state.page == "admin":
+        admin_page()
 
 # Run the app
 if __name__ == "__main__":
