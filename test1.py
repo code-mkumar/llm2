@@ -126,7 +126,20 @@ def guest_page():
                 st.write(f"**Question:** {qa['question']}")
                 st.write(f"**Answer:** {qa['answer']}")
                 st.write("---")
-        
+    # st.subheader("Manage Existing Files")
+    #     existing_file = st.selectbox(
+    #     "Select a file to view or edit:",
+    #     ["collegehistory.txt", "departmenthistory.txt"]
+    # )
+
+    collegehistory=""    
+    with open("collegehistory.txt", "r") as f:
+        collegehistory = f.read()
+    # edited_existing_content = st.text_area("Edit Existing File Content", value=existing_content, height=300)
+    departmenthistory=""    
+    with open("departmenthistory.txt", "r") as f:
+        departmenthistory = f.read()
+           
     default,default_sql=read_default_files()
     st.title("Welcome, Guest!")
     st.write("You can explore the site as a guest, but you'll need to log in for full role-based access.")
@@ -185,6 +198,7 @@ def guest_page():
             answer = model.generate_content(
                 f"{name} this is the user name interact with this name"
                 f"{default} Answer this question: {question} with results {formatted_data} make sure on the data. "
+                f"use the data of college history {collegehistory} and department history {departmenthistory}"
                 # f"Refer to the previous question and answer if needed only: {last_question} {last_answer}"
             )
             result_text = answer.candidates[0].content.parts[0].text
