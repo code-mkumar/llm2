@@ -5,6 +5,7 @@ import qrcode
 from io import BytesIO
 import json
 import google.generativeai as genai
+import os
 # Configure Google Gemini API key
 genai.configure(api_key='AIzaSyD3WqHberJDYyzXkmY1zKaoqd5uCJZDetI')
 model = genai.GenerativeModel('gemini-pro')
