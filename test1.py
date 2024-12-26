@@ -227,7 +227,7 @@ def guest_page():
                 answer = model.generate_content(
                     # f"{name} this is the user name interact with this name"
                     # f"{default} Answer this question: {question} with results {formatted_data} make sure on the data. "
-                    f"use the data {context}"
+                    f"use the data {context} and frame the answer for this question {question}"
                     # f"Refer to the previous question and answer if needed only: {last_question} {last_answer}"
                 )
                 result_text = answer.candidates[0].content.parts[0].text
