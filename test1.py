@@ -6,6 +6,8 @@ from io import BytesIO
 import json
 import google.generativeai as genai
 import os
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 # Configure Google Gemini API key
 genai.configure(api_key='AIzaSyD3WqHberJDYyzXkmY1zKaoqd5uCJZDetI')
 model = genai.GenerativeModel('gemini-pro')
@@ -111,7 +113,21 @@ def read_admin_files():
     with open("admin_sql.txt", "r") as sql_file:
         sql_content = sql_file.read()
     return role_content, sql_content
+# Function to chunk text
+def chunk_text(text, chunk_size=500, overlap=100):
+    words = text.split()
+    chunks = []
+    for i in range(0, len(words), chunk_size - overlap):
+        chunks.append(" ".join(words[i:i + chunk_size]))
+    return chunks
 
+# Function to get relevant chunks using TF-IDF and cosine similarity
+def get_relevant_chunks(query, chunks, top_n=3):
+    vectorizer = TfidfVectorizer()
+    vectors = vectorizer.fit_transform(chunks + [query])
+    cosine_sim = cosine_similarity(vectors[-1:], vectors[:-1])
+    relevant_indices = cosine_sim[0].argsort()[-top_n:][::-1]
+    return [chunks[i] for i in relevant_indices]
 # Pages
 def guest_page():
     # Initialize session state
@@ -171,44 +187,55 @@ def guest_page():
         # submit = st.button('Ask the question')
         question=st.session_state.stored_value
         if question:
-            txt = model.generate_content(f"{question} give 1 if the question needs an SQL query or 0")
-            data = ''
-            if txt.text.strip() != '0':
-                response = model.generate_content(f"{default_sql}\n\n{question}")
-                raw_query = response.text
-                formatted_query = raw_query.replace("sql", "").strip("'''").strip()
-                single_line_query = " ".join(formatted_query.split()).replace("```", "")
-                data = read_sql_query(single_line_query)
-                # st.write(data)
+            relevant_chunks = get_relevant_chunks(user_query, all_chunks)
+            context = "\n\n".join(relevant_chunks)
+            
+            # Display relevant chunks
+            # st.write("Relevant context:")
+            # st.write(context)
+            
+            # Query LM Studio
+            with st.spinner("Generating answer..."):
+                
 
-            if st.session_state.qa_list:
-                last_entry = st.session_state.qa_list[-1]
-                last_question = last_entry['question']
-                last_answer = last_entry['answer']
-                # st.write(last_answer,last_question)
-            else:
-                last_question = "No previous question available."
-                last_answer = "No previous answer available."
-
-            # Format data for readability
-            formatted_data = json.dumps(data, indent=2) if isinstance(data, (dict, list)) else str(data)
-            # st.warning(formatted_data)
-
-            # Generate content using the model
-            answer = model.generate_content(
-                # f"{name} this is the user name interact with this name"
-                # f"{default} Answer this question: {question} with results {formatted_data} make sure on the data. "
-                f"use the data of college history {collegehistory} and department history {departmenthistory}"
-                # f"Refer to the previous question and answer if needed only: {last_question} {last_answer}"
-            )
-            result_text = answer.candidates[0].content.parts[0].text
-
-            # Store the question and answer in session state
-            st.session_state.qa_list.append({'question': question, 'answer': result_text})
-
-            # Display  questions and answers
-            st.markdown(question)
-            st.markdown(result_text)
+                txt = model.generate_content(f"{question} give 1 if the question needs an SQL query or 0")
+                data = ''
+                if txt.text.strip() != '0':
+                    response = model.generate_content(f"{default_sql}\n\n{question}")
+                    raw_query = response.text
+                    formatted_query = raw_query.replace("sql", "").strip("'''").strip()
+                    single_line_query = " ".join(formatted_query.split()).replace("```", "")
+                    data = read_sql_query(single_line_query)
+                    # st.write(data)
+    
+                if st.session_state.qa_list:
+                    last_entry = st.session_state.qa_list[-1]
+                    last_question = last_entry['question']
+                    last_answer = last_entry['answer']
+                    # st.write(last_answer,last_question)
+                else:
+                    last_question = "No previous question available."
+                    last_answer = "No previous answer available."
+    
+                # Format data for readability
+                formatted_data = json.dumps(data, indent=2) if isinstance(data, (dict, list)) else str(data)
+                # st.warning(formatted_data)
+    
+                # Generate content using the model
+                answer = model.generate_content(
+                    # f"{name} this is the user name interact with this name"
+                    # f"{default} Answer this question: {question} with results {formatted_data} make sure on the data. "
+                    f"use the data of college history {collegehistory} and department history {departmenthistory}"
+                    # f"Refer to the previous question and answer if needed only: {last_question} {last_answer}"
+                )
+                result_text = answer.candidates[0].content.parts[0].text
+    
+                # Store the question and answer in session state
+                st.session_state.qa_list.append({'question': question, 'answer': result_text})
+    
+                # Display  questions and answers
+                st.markdown(question)
+                st.markdown(result_text)
             
 
 #login page
