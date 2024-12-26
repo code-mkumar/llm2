@@ -591,49 +591,46 @@ def admin_page():
     st.title("Admin Dashboard")
     st.write(f"Welcome, {name}! 👋")
 
-    if module == "File Upload and Edit":
-        for file_name in ["collegehistory.txt", "departmenthistory.txt", "syllabus.txt"]:
-    if not os.path.exists(file_name):
-        with open(file_name, "w") as f:
-            f.write("")
+    for file_name in ["collegehistory.txt", "departmenthistory.txt", "syllabus.txt"]:
+        if not os.path.exists(file_name):
+            with open(file_name, "w") as f:
+                f.write("")
 
-# Module for file upload and editing
-if "File Upload and Edit":
-    st.subheader("File Upload and Edit Module")
-
-    # Selection of category to save the file
-    category = st.selectbox(
+    if "File Upload and Edit":
+        st.subheader("File Upload and Edit Module")
+         # Selection of category to save the file
+        category = st.selectbox(
         "Select the category to save the uploaded file:",
         ["collegehistory.txt", "departmenthistory.txt", "syllabus.txt"]
     )
 
     # File uploader
-    uploaded_file = st.file_uploader(
+        uploaded_file = st.file_uploader(
         "Upload a PDF, Word, or Text file", type=["pdf", "docx", "txt"]
     )
 
-    if uploaded_file:
+        if uploaded_file:
         # Read and display the content of the uploaded file
-        if uploaded_file.type == "application/pdf":
-            import PyPDF2
-            pdf_reader = PyPDF2.PdfReader(uploaded_file)
-            file_content = "".join([page.extract_text() for page in pdf_reader.pages])
-        elif uploaded_file.type in ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"]:
-            from docx import Document
-            doc = Document(uploaded_file)
-            file_content = "\n".join([p.text for p in doc.paragraphs])
-        else:
-            file_content = uploaded_file.read().decode('utf-8')
+            if uploaded_file.type == "application/pdf":
+                import PyPDF2
+                pdf_reader = PyPDF2.PdfReader(uploaded_file)
+                file_content = "".join([page.extract_text() for page in pdf_reader.pages])
+            elif uploaded_file.type in ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"]:
+                from docx import Document
+                doc = Document(uploaded_file)
+                file_content = "\n".join([p.text for p in doc.paragraphs])
+            else:
+                file_content = uploaded_file.read().decode('utf-8')
 
-        # st.text_area("Uploaded File Content", value=file_content, height=300)
+            st.text_area("Uploaded File Content", value=file_content, height=300, disabled=True)
 
         # Section for editing file content
-        edited_content = st.text_area("Edit File Content", value=file_content, height=300)
+            edited_content = st.text_area("Edit File Content", value=file_content, height=300)
 
-        if st.button("Save File"):
-            with open(category, "w") as f:
-                f.write(edited_content)
-            st.success(f"File content saved to {category} successfully!")
+            if st.button("Save File"):
+                with open(category, "w") as f:
+                    f.write(edited_content)
+                st.success(f"File content saved to {category} successfully!")
 
     # Section for managing existing files
         st.subheader("Manage Existing Files")
@@ -655,7 +652,7 @@ if "File Upload and Edit":
     # Deletion section
         st.subheader("Delete File Content")
         file_to_delete = st.selectbox(
-            "Select a file to delete content:",
+        "Select a file to delete content:",
         ["collegehistory.txt", "departmenthistory.txt", "syllabus.txt"]
     )
 
@@ -663,6 +660,11 @@ if "File Upload and Edit":
             with open(file_to_delete, "w") as f:
                 f.write("")
             st.success(f"Content of {file_to_delete} deleted successfully!")
+
+
+   
+    
+
 
     elif module == "Database Setup":
         st.subheader("Database Setup Module")
