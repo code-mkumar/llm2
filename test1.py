@@ -597,6 +597,15 @@ def admin_page():
             with open(file_name, "w") as f:
                 f.write("")
 
+# List of text files
+    file_names = ["collegehistory.txt", "departmenthistory.txt", "syllabus.txt"]
+
+# Display absolute paths of the files
+    st.subheader("File Locations")
+    for file_name in file_names:
+        file_path = os.path.abspath(file_name)
+        st.text(f"{file_name}: {file_path}")
+
     if "File Upload and Edit":
         st.subheader("File Upload and Edit Module")
          # Selection of category to save the file
