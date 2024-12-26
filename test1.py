@@ -568,7 +568,7 @@ def admin_page():
             "Select Module",
             options=["File Upload and Edit", "Database Setup", "Query Area", "Logout"]
         )
-        st.rerun()
+        # st.rerun()
 
     # Inject custom CSS for styling
     st.markdown("""
