@@ -187,7 +187,9 @@ def guest_page():
         # submit = st.button('Ask the question')
         question=st.session_state.stored_value
         if question:
-            relevant_chunks = get_relevant_chunks(user_query, all_chunks)
+            chunks = chunk_text(f"{collegehistory}\n{departmenthistory}")
+            # all_chunks.extend(chunks)
+            relevant_chunks = get_relevant_chunks(question,chunks)
             context = "\n\n".join(relevant_chunks)
             
             # Display relevant chunks
