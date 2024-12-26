@@ -282,7 +282,7 @@ def guest_page():
         collegehistory = f.read()
     with open("departmenthistory.txt", "r") as f:
         departmenthistory = f.read()
-
+    default,default_sql=read_default_files()
     # Display guest welcome message
     st.title("Welcome, Guest!")
     st.write("You can explore the site as a guest, but you'll need to log in for full role-based access.")
