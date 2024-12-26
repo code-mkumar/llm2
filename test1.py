@@ -629,7 +629,7 @@ def admin_page():
             edited_content = st.text_area("Edit File Content", value=file_content, height=300)
 
             if st.button("Save File"):
-                with open(category, "w") as f:
+                with open(category, "a") as f:
                     f.write(edited_content)
                 st.success(f"File content saved to {category} successfully!")
 
