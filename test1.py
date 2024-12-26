@@ -178,7 +178,7 @@ def guest_page():
             st.session_state.input = ""
         if "stored_value" not in st.session_state:
             st.session_state.stored_value = ""
-
+        chunks = chunk_text(f"{collegehistory}\n{departmenthistory}")
         def process_and_clear():
             st.session_state.stored_value = st.session_state.input
             st.session_state.input = ""
@@ -187,7 +187,7 @@ def guest_page():
         # submit = st.button('Ask the question')
         question=st.session_state.stored_value
         if question:
-            chunks = chunk_text(f"{collegehistory}\n{departmenthistory}")
+            
             # all_chunks.extend(chunks)
             relevant_chunks = get_relevant_chunks(question,chunks)
             context = "\n\n".join(relevant_chunks)
