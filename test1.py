@@ -614,7 +614,7 @@ def admin_page():
 
 # List of text files
                            
-    if "File Upload and Edit":
+    if module=="File Upload and Edit":
         st.subheader("File Upload and Edit Module")
          # Selection of category to save the file
         category = st.selectbox(
