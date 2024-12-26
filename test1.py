@@ -311,8 +311,8 @@ def guest_page():
             context = "\n\n".join(relevant_chunks)
 
             # Display relevant context
-            st.write("Relevant context:")
-            st.write(context)
+            # st.write("Relevant context:")
+            # st.write(context)
 
             # Query LM Studio for the answer
             with st.spinner("Generating answer..."):
@@ -520,7 +520,7 @@ def get_gemini_response(combined_prompt):
 # Function to query the SQL database
 def read_sql_query(sql):
     try:
-        st.write(sql)
+        # st.write(sql)
         conn = create_connection()
         cur = conn.cursor()
         cur.execute(sql)
