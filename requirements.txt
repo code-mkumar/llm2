@@ -9,3 +9,5 @@ google-auth==2.35.0
 google-auth-httplib2==0.2.0
 google-cloud==0.34.0
 google-generativeai
+python-docx
+PyPDF2
