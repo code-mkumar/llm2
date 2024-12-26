@@ -193,8 +193,8 @@ def guest_page():
             context = "\n\n".join(relevant_chunks)
             
             # Display relevant chunks
-            # st.write("Relevant context:")
-            # st.write(context)
+            st.write("Relevant context:")
+            st.write(context)
             
             # Query LM Studio
             with st.spinner("Generating answer..."):
