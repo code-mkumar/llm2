@@ -11,3 +11,4 @@ google-cloud==0.34.0
 google-generativeai
 python-docx
 PyPDF2
+scikit-learn
