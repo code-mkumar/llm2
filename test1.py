@@ -291,7 +291,7 @@ def guest_page():
     name = st.text_input('Enter your name:', placeholder='John', key='name')
     if name and not st.session_state.username:
         st.session_state.username = name
-    else:
+    elif name:
         st.write(f"Hello, {name}!")
 
     # Process questions if the username is set
