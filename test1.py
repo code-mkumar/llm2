@@ -11,7 +11,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 # Configure Google Gemini API key
 genai.configure(api_key='AIzaSyD3WqHberJDYyzXkmY1zKaoqd5uCJZDetI')
 model = genai.GenerativeModel('gemini-pro')
-
+import sqlite3
 
 
 
@@ -814,7 +814,7 @@ def admin_page():
 
 
     elif module == "Database Setup":
-        import sqlite3
+        
 
         # SQLite connection function
         def create_connection():
@@ -824,55 +824,58 @@ def admin_page():
         def create_main_tables():
             conn = create_connection()
             cursor = conn.cursor()
-            
-            # Create Department table
-            cursor.execute("""
-            CREATE TABLE IF NOT EXISTS department (
-                department_id VARCHAR(50) PRIMARY KEY,
-                name TEXT,
-                graduate_level TEXT,
-                phone TEXT
-            );
-            """)
-            
-            # Create Staff table
-            cursor.execute("""
-            CREATE TABLE IF NOT EXISTS staff (
-                staff_id TEXT PRIMARY KEY,
-                name TEXT,
-                designation TEXT,
-                phone TEXT,
-                department_id INTEGER,
-                FOREIGN KEY(department_id) REFERENCES department(department_id)
-            );
-            """)
-            
-            # Create Timetable table
-            cursor.execute("""
-            CREATE TABLE IF NOT EXISTS timetable (
-                timetable_id TEXT PRIMARY KEY AUTOINCREMENT,
-                day TEXT,
-                time TEXT,
-                subject TEXT,
-                department_id INTEGER,
-                class varchar(50),
-                FOREIGN KEY(department_id) REFERENCES department(department_id)
-            );
-            """)
-            
-            # Create Subject table
-            cursor.execute("""
-            CREATE TABLE IF NOT EXISTS subject (
-                subject_id TEXT PRIMARY KEY,
-                name TEXT,
-                code TEXT,
-                department_id INTEGER,
-                FOREIGN KEY(department_id) REFERENCES department(department_id)
-            );
-            """)
-            
-            conn.commit()
-            conn.close()
+            try:
+                # Create Department table
+                cursor.execute("""
+                CREATE TABLE IF NOT EXISTS department (
+                    department_id VARCHAR(50) PRIMARY KEY,
+                    name TEXT,
+                    graduate_level TEXT,
+                    phone TEXT
+                );
+                """)
+                
+                # Create Staff table
+                cursor.execute("""
+                CREATE TABLE IF NOT EXISTS staff (
+                    staff_id TEXT PRIMARY KEY,
+                    name TEXT,
+                    designation TEXT,
+                    phone TEXT,
+                    department_id INTEGER,
+                    FOREIGN KEY(department_id) REFERENCES department(department_id)
+                );
+                """)
+                
+                # Create Timetable table
+                cursor.execute("""
+                CREATE TABLE IF NOT EXISTS timetable (
+                    timetable_id TEXT PRIMARY KEY AUTOINCREMENT,
+                    day TEXT,
+                    time TEXT,
+                    subject TEXT,
+                    department_id INTEGER,
+                    class varchar(50),
+                    FOREIGN KEY(department_id) REFERENCES department(department_id)
+                );
+                """)
+                
+                # Create Subject table
+                cursor.execute("""
+                CREATE TABLE IF NOT EXISTS subject (
+                    subject_id TEXT PRIMARY KEY,
+                    name TEXT,
+                    code TEXT,
+                    department_id INTEGER,
+                    FOREIGN KEY(department_id) REFERENCES department(department_id)
+                );
+                """)
+                
+                conn.commit()
+            except :
+                st.write("error")
+            finally:
+                conn.close()
         
         # Insert data into the department table
         def add_department(department_id, name, graduate_level, phone):
