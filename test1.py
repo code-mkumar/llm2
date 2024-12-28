@@ -291,11 +291,12 @@ def guest_page():
     name = st.text_input('Enter your name:', placeholder='John', key='name')
     if name and not st.session_state.username:
         st.session_state.username = name
-    elif name:
-        st.write(f"Hello, {name}!")
+    
+        # st.write(f"Hello, {name}!")
 
     # Process questions if the username is set
     if st.session_state.username:
+        st.write(f"Hello, {name}!")
         chunks = chunk_text(f"{collegehistory}\n{departmenthistory}")
 
         def process_and_clear():
