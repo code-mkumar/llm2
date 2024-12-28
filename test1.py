@@ -288,8 +288,9 @@ def guest_page():
     st.write("You can explore the site as a guest, but you'll need to log in for full role-based access.")
 
     # Ask for the user's name
-    name = st.text_input('Enter your name:', placeholder='John', key='name')
-    if name and not st.session_state.username:
+    name = ''
+    if not name and not st.session_state.username:
+        name=st.text_input('Enter your name:', placeholder='John', key='name')
         st.session_state.username = name
     
         # st.write(f"Hello, {name}!")
