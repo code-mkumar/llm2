@@ -373,8 +373,9 @@ def login_page():
                     st.rerun()
         else:
             st.error("Invalid credentials.")
-    if st.button("Visit as Guest"):
+    if st.button("←--"):
         st.session_state.page = "guest"
+        st.rerun()
 
 #qr scanning page
 def qr_setup_page():
