@@ -333,7 +333,7 @@ def guest_page():
 
                 # Generate answer using the context and formatted data
                 answer = model.generate_content(
-                    f"use the data {context} and frame the answer for this question {question} use this template {default}"
+                    f"use the data {context} and frame the answer for this question {question} use this template {default} in formal english"
                 )
                 result_text = answer.candidates[0].content.parts[0].text
 
