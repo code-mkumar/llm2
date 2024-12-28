@@ -700,38 +700,38 @@ def admin_page():
         )
         # st.rerun()
 
-    # Inject custom CSS for styling
-    st.markdown("""
-    <style>
-    .stExpander {
-        position: fixed;
-        top: 70px;
-        right: 10px;
-        width: 200px !important;
-        z-index: 9999;
-    }
-    .stExpander > div > div {
-        background-color: #f5f5f5;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    .stButton button {
-        width: 90%;
-        margin: 5px auto;
-        display: block;
-        background-color: #007bff;
-        color: white;
-        border-radius: 5px;
-        border: none;
-        font-size: 14px;
-        cursor: pointer;
-    }
-    .stButton button:hover {
-        background-color: #0056b3;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+    # # Inject custom CSS for styling
+    # st.markdown("""
+    # <style>
+    # .stExpander {
+    #     position: fixed;
+    #     top: 70px;
+    #     right: 10px;
+    #     width: 200px !important;
+    #     z-index: 9999;
+    # }
+    # .stExpander > div > div {
+    #     background-color: #f5f5f5;
+    #     border: 1px solid #ccc;
+    #     border-radius: 10px;
+    #     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    # }
+    # .stButton button {
+    #     width: 90%;
+    #     margin: 5px auto;
+    #     display: block;
+    #     background-color: #007bff;
+    #     color: white;
+    #     border-radius: 5px;
+    #     border: none;
+    #     font-size: 14px;
+    #     cursor: pointer;
+    # }
+    # .stButton button:hover {
+    #     background-color: #0056b3;
+    # }
+    # </style>
+    # """, unsafe_allow_html=True)
 
     # Main page content
     st.title("Admin Dashboard")
