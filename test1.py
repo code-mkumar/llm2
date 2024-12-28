@@ -814,14 +814,199 @@ def admin_page():
 
 
     elif module == "Database Setup":
-        st.subheader("Database Setup Module")
-        st.write("Set up the database for students and staff.")
-        db_name = st.text_input("Enter Database Name")
-        admin_username = st.text_input("Enter Admin Username")
-        admin_password = st.text_input("Enter Admin Password", type="password")
-        if st.button("Setup Database"):
-            # Add actual DB setup logic here
-            st.success(f"Database '{db_name}' setup completed!")
+        import sqlite3
+
+        # SQLite connection function
+        def create_connection():
+            return sqlite3.connect("dynamic_department.db")
+        
+        # Create tables for departments, staff, timetable, and subjects
+        def create_main_tables():
+            conn = create_connection()
+            cursor = conn.cursor()
+            
+            # Create Department table
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS department (
+                department_id VARCHAR(50) PRIMARY KEY,
+                name TEXT,
+                graduate_level TEXT,
+                phone TEXT
+            );
+            """)
+            
+            # Create Staff table
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS staff (
+                staff_id TEXT PRIMARY KEY,
+                name TEXT,
+                designation TEXT,
+                phone TEXT,
+                department_id INTEGER,
+                FOREIGN KEY(department_id) REFERENCES department(department_id)
+            );
+            """)
+            
+            # Create Timetable table
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS timetable (
+                timetable_id TEXT PRIMARY KEY AUTOINCREMENT,
+                day TEXT,
+                time TEXT,
+                subject TEXT,
+                department_id INTEGER,
+                class varchar(50),
+                FOREIGN KEY(department_id) REFERENCES department(department_id)
+            );
+            """)
+            
+            # Create Subject table
+            cursor.execute("""
+            CREATE TABLE IF NOT EXISTS subject (
+                subject_id TEXT PRIMARY KEY,
+                name TEXT,
+                code TEXT,
+                department_id INTEGER,
+                FOREIGN KEY(department_id) REFERENCES department(department_id)
+            );
+            """)
+            
+            conn.commit()
+            conn.close()
+        
+        # Insert data into the department table
+        def add_department(department_id, name, graduate_level, phone):
+            conn = create_connection()
+            cursor = conn.cursor()
+            cursor.execute("""
+            INSERT INTO department (department_id, name, graduate_level, phone)
+            VALUES (?, ?, ?, ?);
+            """, (department_id, name, graduate_level, phone))
+            conn.commit()
+            conn.close()
+        
+        # Fetch all departments
+        def fetch_departments():
+            conn = create_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM department;")
+            departments = cursor.fetchall()
+            conn.close()
+            return departments
+        
+        # Insert data into the staff table
+        def add_staff(staff_id, name, designation, phone, department_id):
+            conn = create_connection()
+            cursor = conn.cursor()
+            cursor.execute("""
+            INSERT INTO staff (staff_id, name, designation, phone, department_id)
+            VALUES (?, ?, ?, ?, ?);
+            """, (staff_id, name, designation, phone, department_id))
+            conn.commit()
+            conn.close()
+        
+        # Insert data into the timetable table
+        def add_timetable(day, time, subject, department_id,class_name):
+            conn = create_connection()
+            cursor = conn.cursor()
+            cursor.execute("""
+            INSERT INTO timetable (day, time, subject, department_id,class)
+            VALUES (?, ?, ?, ?,?);
+            """, ( day, time, subject, department_id,class_name))
+            conn.commit()
+            conn.close()
+        
+        # Insert data into the subject table
+        def add_subject(subject_id, name, code, department_id):
+            conn = create_connection()
+            cursor = conn.cursor()
+            cursor.execute("""
+            INSERT INTO subject (subject_id, name, code, department_id)
+            VALUES (?, ?, ?, ?);
+            """, (subject_id, name, code, department_id))
+            conn.commit()
+            conn.close()
+        
+        # Streamlit app
+        st.title("Department and Related Tables Management")
+        
+        # Create tables if they don't exist
+        create_main_tables()
+        
+        # Add a Department
+        with st.expander("Add a New Department"):
+            department_id = st.text_input("Department Id:")
+            name = st.text_input("Department Name:")
+            graduate_level = st.selectbox("Graduate Level:", ["UG", "PG"])
+            phone = st.text_input("Phone Number:")
+        
+            if st.button("Add Department"):
+                if department_id and name and graduate_level and phone:
+                    add_department(department_id, name, graduate_level, phone)
+                    st.success(f"Department '{name}' added successfully!")
+                else:
+                    st.error("Please fill all the fields.")
+        
+        # Display existing departments
+        departments = fetch_departments()
+        if departments:
+            with st.expander("Existing Departments"):
+                for dept in departments:
+                    st.write(f"ID: {dept[0]}, Name: {dept[1]}, Graduate Level: {dept[2]}, Phone: {dept[3]}")
+        
+            # Select a department ID for further actions
+            selected_department_id = st.selectbox(
+                "Select Department ID for Adding Staff, Timetable, or Subjects:", 
+                [dept[0] for dept in departments]
+            )
+            selected_dept = next((dept for dept in departments if dept[0] == selected_department_id), None)
+            graduate_level = selected_dept[2]
+            # Add Staff to the selected department
+            with st.expander("Add Staff to Selected Department"):
+                staff_id = st.text_input("Staff Id:")
+                staff_name = st.text_input("Staff Name:")
+                designation = st.text_input("Designation:")
+                staff_phone = st.text_input("Phone:")
+                
+                if st.button("Add Staff"):
+                    if staff_id and staff_name and designation and staff_phone:
+                        add_staff(staff_id, staff_name, designation, staff_phone, selected_department_id)
+                        st.success(f"Staff '{staff_name}' added to Department ID {selected_department_id}!")
+                    else:
+                        st.error("Please fill all the fields.")
+        
+            # Add Timetable to the selected department
+            with st.expander("Add Timetable to Selected Department"):
+                timetable_id = st.text_input("Time Table Id:")
+                day = st.text_input("Day:")
+                time = st.text_input("Time:")
+                subject = st.text_input("Subject:")
+        
+                if graduate_level == "PG": 
+                    class_name = st.selectbox("Class:", ["I", "II"]) 
+                else: 
+                    class_name = st.selectbox("Class:", ["I", "II", "III"])
+                
+                if st.button("Add Timetable"):
+                    if timetable_id and day and time and subject:
+                        add_timetable(timetable_id, day, time, subject, selected_department_id)
+                        st.success(f"Timetable for '{day} at {time}' added to Department ID {selected_department_id}!")
+                    else:
+                        st.error("Please fill all the fields.")
+        
+            # Add Subject to the selected department
+            with st.expander("Add Subject to Selected Department"):
+                subject_id = st.text_input("Subject Id:")
+                subject_name = st.text_input("Subject Name:")
+                subject_code = st.text_input("Subject Code:")
+                
+                if st.button("Add Subject"):
+                    if subject_id and subject_name and subject_code:
+                        add_subject(subject_id, subject_name, subject_code, selected_department_id)
+                        st.success(f"Subject '{subject_name}' added to Department ID {selected_department_id}!")
+                    else:
+                        st.error("Please fill all the fields.")
+
 
     elif module == "Query Area":
         st.subheader("Query Area Module")
