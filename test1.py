@@ -297,7 +297,7 @@ def guest_page():
 
     # Process questions if the username is set
     if st.session_state.username:
-        st.write(f"Hello, {name}!")
+        st.write(f"Hello, {st.session_state.username}!")
         chunks = chunk_text(f"{collegehistory}\n{departmenthistory}")
 
         def process_and_clear():
