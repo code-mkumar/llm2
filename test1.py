@@ -312,7 +312,7 @@ def guest_page():
 
             # Display relevant context
             # st.write("Relevant context:")
-            st.write(context)
+            # st.write(context)
 
             # Query LM Studio for the answer
             with st.spinner("Generating answer..."):
