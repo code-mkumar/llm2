@@ -291,6 +291,7 @@ def guest_page():
     name = st.text_input('Enter your name:', placeholder='John', key='name')
     if name and not st.session_state.username:
         st.session_state.username = name
+    else:
         st.write(f"Hello, {name}!")
 
     # Process questions if the username is set
@@ -562,14 +563,14 @@ def welcome_page():
     # Inject custom CSS for the expander
     st.markdown("""
     <style>
-    .stExpander {
+    .st-key-Expanderx {
         position: fixed; /* Keep the expander fixed */
         top: 70px; /* Distance from the top */
         right: 10px; /* Distance from the right */
         width: 200px !important; /* Shrink the width */
         z-index: 9999; /* Bring it to the front */
     }
-    .stExpander > div > div {
+    .st-key-Expanderx > div > div {
         background-color: #f5f5f5; /* Light grey background */
         border: 1px solid #ccc; /* Border styling */
         border-radius: 10px; /* Rounded corners */
@@ -604,7 +605,7 @@ def welcome_page():
 """, unsafe_allow_html=True)
 
 # Main page user menu using expander
-    with st.expander(f"Welcome, {name}! 🧑‍💻"):
+    with st.expander(f"Welcome, {name}! 🧑‍💻",key="Expanderx"):
         st.write("Choose an action:")
         with st.popover("profile"):
             st.write(f"name:{name}")
