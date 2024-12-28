@@ -563,14 +563,14 @@ def welcome_page():
     # Inject custom CSS for the expander
     st.markdown("""
     <style>
-    .st-key-Expanderx {
+    .stExpander {
         position: fixed; /* Keep the expander fixed */
         top: 70px; /* Distance from the top */
         right: 10px; /* Distance from the right */
         width: 200px !important; /* Shrink the width */
         z-index: 9999; /* Bring it to the front */
     }
-    .st-key-Expanderx > div > div {
+    .stExpander > div > div {
         background-color: #f5f5f5; /* Light grey background */
         border: 1px solid #ccc; /* Border styling */
         border-radius: 10px; /* Rounded corners */
@@ -605,7 +605,7 @@ def welcome_page():
 """, unsafe_allow_html=True)
 
 # Main page user menu using expander
-    with st.expander(f"Welcome, {name}! 🧑‍💻",key="Expanderx"):
+    with st.expander(f"Welcome, {name}! 🧑‍💻"):
         st.write("Choose an action:")
         with st.popover("profile"):
             st.write(f"name:{name}")
