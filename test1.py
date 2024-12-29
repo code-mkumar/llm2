@@ -690,7 +690,7 @@ def welcome_page():
                     st.write(f"**Answer:** {qa['answer']}")
                     st.write("---")
 def staff_page():
-    st.set_page_config(page_title="Anjac_AI", layout="wide")
+    st.set_page_config(page_title="Anjac_AI_staff", layout="wide")
     secret, role, name = get_user_details(st.session_state.user_id)
     update_multifactor_status(st.session_state.user_id, st.session_state.multifactor ,secret)  # Update MFA status in the database
     # Sidebar content
