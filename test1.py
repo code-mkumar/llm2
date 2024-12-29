@@ -401,7 +401,7 @@ def qr_setup_page():
     otp = st.text_input("Enter OTP from Authenticator App", type="password")
     if st.button("Verify OTP"):
         # secret, role, name = get_user_details(st.session_state.user_id)
-        if verify_otp(secret, otp):
+        if verify_otp(st.session_state.secret, otp):
             st.session_state.multifactor = 1
             _, role, name = get_user_details(user_id)
             st.session_state.id=user_id
@@ -440,7 +440,7 @@ def otp_verification_page():
 
     otp = st.text_input("Enter OTP", type="password")
     if st.button("Verify"):
-        if   verify_otp(secret, otp):
+        if  verify_otp(secret, otp):
             st.success("OTP Verified! Welcome.")
             
             if role == "student":
