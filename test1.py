@@ -113,131 +113,7 @@ def read_admin_files():
     with open("admin_sql.txt", "r") as sql_file:
         sql_content = sql_file.read()
     return role_content, sql_content
-# # Function to chunk text
-# def chunk_text(text, chunk_size=500, overlap=100):
-#     words = text.split()
-#     chunks = []
-#     for i in range(0, len(words), chunk_size - overlap):
-#         chunks.append(" ".join(words[i:i + chunk_size]))
-#     return chunks
 
-# # Function to get relevant chunks using TF-IDF and cosine similarity
-# def get_relevant_chunks(query, chunks, top_n=3):
-#     vectorizer = TfidfVectorizer()
-#     vectors = vectorizer.fit_transform(chunks + [query])
-#     cosine_sim = cosine_similarity(vectors[-1:], vectors[:-1])
-#     relevant_indices = cosine_sim[0].argsort()[-top_n:][::-1]
-#     return [chunks[i] for i in relevant_indices]
-# # Pages
-# def guest_page():
-#     # Initialize session state
-#     if 'qa_list' not in st.session_state:
-#         st.session_state.qa_list = []
-#     # st.write("helo")
-#     with st.sidebar:
-#         if st.button("Go to Login"):
-#             st.session_state.page = "login"
-#             st.rerun()
-#         for qa in reversed(st.session_state.qa_list):
-#                 st.write(f"**Question:** {qa['question']}")
-#                 st.write(f"**Answer:** {qa['answer']}")
-#                 st.write("---")
-#     # st.subheader("Manage Existing Files")
-#     #     existing_file = st.selectbox(
-#     #     "Select a file to view or edit:",
-#     #     ["collegehistory.txt", "departmenthistory.txt"]
-#     # )
-
-#     collegehistory=""    
-#     with open("collegehistory.txt", "r") as f:
-#         collegehistory = f.read()
-#     # edited_existing_content = st.text_area("Edit Existing File Content", value=existing_content, height=300)
-#     departmenthistory=""    
-#     with open("departmenthistory.txt", "r") as f:
-#         departmenthistory = f.read()
-           
-#     default,default_sql=read_default_files()
-#     st.title("Welcome, Guest!")
-#     st.write("You can explore the site as a guest, but you'll need to log in for full role-based access.")
-    
-#     # Initialize the name input
-#     if 'username' not in st.session_state:
-#         st.session_state.username = ''
-#     name=''
-    
-#     if not st.session_state.username:
-#         # Ask for the user's name
-#         name = st.text_input('Enter your name:', placeholder='John', key='name')
-#         if name:
-#             st.session_state.username = name
-#             st.write(model.generate_content(f"Introduce yourself: {default}").text)
-#     if  st.session_state.username:
-#         # Display a welcome message once the name is entered
-#         st.write(f"Hello, {st.session_state.username}!")
-#         if "input" not in st.session_state:
-#             st.session_state.input = ""
-#         if "stored_value" not in st.session_state:
-#             st.session_state.stored_value = ""
-#         chunks = chunk_text(f"{collegehistory}\n{departmenthistory}")
-#         def process_and_clear():
-#             st.session_state.stored_value = st.session_state.input
-#             st.session_state.input = ""
-#         # Allow the user to ask a question
-#         question1 = st.text_area('Input your question:', key='input',on_change=process_and_clear)
-#         # submit = st.button('Ask the question')
-#         question=st.session_state.stored_value
-#         if question:
-            
-#             # all_chunks.extend(chunks)
-#             relevant_chunks = get_relevant_chunks(question,chunks)
-#             context = "\n\n".join(relevant_chunks)
-            
-#             # Display relevant chunks
-#             st.write("Relevant context:")
-#             st.write(context)
-            
-#             # Query LM Studio
-#             with st.spinner("Generating answer..."):
-                
-
-#                 txt = model.generate_content(f"{question} give 1 if the question needs an SQL query or 0")
-#                 data = ''
-#                 if txt.text.strip() != '0':
-#                     response = model.generate_content(f"{default_sql}\n\n{question}")
-#                     raw_query = response.text
-#                     formatted_query = raw_query.replace("sql", "").strip("'''").strip()
-#                     single_line_query = " ".join(formatted_query.split()).replace("```", "")
-#                     data = read_sql_query(single_line_query)
-#                     # st.write(data)
-    
-#                 if st.session_state.qa_list:
-#                     last_entry = st.session_state.qa_list[-1]
-#                     last_question = last_entry['question']
-#                     last_answer = last_entry['answer']
-#                     # st.write(last_answer,last_question)
-#                 else:
-#                     last_question = "No previous question available."
-#                     last_answer = "No previous answer available."
-    
-#                 # Format data for readability
-#                 formatted_data = json.dumps(data, indent=2) if isinstance(data, (dict, list)) else str(data)
-#                 # st.warning(formatted_data)
-    
-#                 # Generate content using the model
-#                 answer = model.generate_content(
-#                     # f"{name} this is the user name interact with this name"
-#                     # f"{default} Answer this question: {question} with results {formatted_data} make sure on the data. "
-#                     f"use the data {context} and frame the answer for this question {question}"
-#                     # f"Refer to the previous question and answer if needed only: {last_question} {last_answer}"
-#                 )
-#                 result_text = answer.candidates[0].content.parts[0].text
-    
-#                 # Store the question and answer in session state
-#                 st.session_state.qa_list.append({'question': question, 'answer': result_text})
-    
-#                 # Display  questions and answers
-#                 st.markdown(question)
-#                 st.markdown(result_text)
             
 def chunk_text(text, chunk_size=500, overlap=100):
     words = text.split()
@@ -852,7 +728,7 @@ def admin_page():
         st.header("Admin Modules")
         module = st.radio(
             "Select Module",
-            options=["File Upload and Edit", "Database Setup", "Query Area", "Logout"]
+            options=["File Upload and Edit", "Database Setup", "Query Area","admin data", "Logout"]
         )
         # st.rerun()
 
@@ -982,6 +858,14 @@ def admin_page():
             conn = create_connection()
             cursor = conn.cursor()
             try:
+                cursor.execute("""
+                CREATE TABLE IF NOT EXISTS admin (
+                    admin_id VARCHAR(50) PRIMARY KEY,
+                    password VARCHAR(50) DEFAULT 'admin_pass',
+                    mfa BOOLEAN DEFAULT 0,
+                    code VARCHAR(50) DEFAULT 'none'
+                );
+                """)
                 # Create Department table
                 cursor.execute("""
                 CREATE TABLE IF NOT EXISTS department (
@@ -989,6 +873,7 @@ def admin_page():
                     name TEXT,
                     graduate_level TEXT,
                     phone TEXT
+                    
                 );
                 """)
                 
@@ -1000,6 +885,9 @@ def admin_page():
                     designation TEXT,
                     phone TEXT,
                     department_id INTEGER,
+                    password VARCHAR(50) DEFAULT 'pass_staff',
+                    mfa BOOLEAN DEFAULT 0,
+                    code VARCHAR(50) DEFAULT 'none',
                     FOREIGN KEY(department_id) REFERENCES department(department_id)
                 );
                 """)
@@ -1062,6 +950,17 @@ def admin_page():
             INSERT INTO staff (staff_id, name, designation, phone, department_id)
             VALUES (?, ?, ?, ?, ?);
             """, (staff_id, name, designation, phone, department_id))
+            conn.commit()
+            conn.close()
+            
+        # Insert data into the staff table
+        def add_admin(admin_id):
+            conn = create_connection()
+            cursor = conn.cursor()
+            cursor.execute("""
+            INSERT INTO staff (admin_id)
+            VALUES (?);
+            """, (admin_id))
             conn.commit()
             conn.close()
         
@@ -1175,7 +1074,11 @@ def admin_page():
         if st.button("Execute Query"):
             # Add query execution logic here
             st.success(f"Executed query: {query}")
-
+    elif module == "admin data":
+        st.subheader("admin")
+        admin_id = st.text_input("enter the admin ID")
+        if admin_id:
+            add_admin(admin_id)
     elif module == "Logout":
         st.session_state.authenticated = False
         st.session_state.page = "login"
