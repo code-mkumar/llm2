@@ -932,6 +932,7 @@ def admin_page():
         # Create tables if they don't exist
         create_main_tables()
         
+        
         # Add a Department
         with st.expander("Add a New Department"):
             department_id = st.text_input("Department Id:")
