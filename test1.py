@@ -411,10 +411,14 @@ def qr_setup_page():
                 role_content, sql_content = read_student_files()
                 st.session_state.role_content = role_content
                 st.session_state.sql_content = sql_content
+                st.session_state.page = "welcome"
+                st.rerun()
             if role == "staff":
                 role_content,sql_content = read_staff_files()
                 st.session_state.role_content = role_content
                 st.session_state.sql_content = sql_content
+                st.session_state.page = "staff"
+                st.rerun()
             if role == "admin":
                 role_content,sql_content = read_admin_files()
                 st.session_state.role_content = role_content
@@ -422,8 +426,8 @@ def qr_setup_page():
                 st.session_state.page = "admin"
                 st.rerun()
             st.success("Multifactor authentication is now enabled.")
-            st.session_state.page = "welcome"
-            st.rerun()
+            # st.session_state.page = "welcome"
+            # st.rerun()
         else:
             st.error("Invalid OTP. Try again.")
 
