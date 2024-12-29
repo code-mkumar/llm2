@@ -396,20 +396,12 @@ def qr_setup_page():
     qr_code_stream = generate_qr_code(user_id, secret)
     st.image(qr_code_stream, caption="Scan this QR code with your authenticator app.", use_container_width=False)
     st.write(f"Secret Code: `{secret}` (store this securely!)")
-
+    update_multifactor_status(user_id, 0 ,secret)  # Update MFA status in the database
     # Immediate OTP verification
     otp = st.text_input("Enter OTP from Authenticator App", type="password")
     if st.button("Verify OTP"):
         # secret, role, name = get_user_details(st.session_state.user_id)
-        if not verify_otp(secret, otp):
-            verify = update_multifactor_status(user_id, 1,secret)  # Update MFA status in the database
-            if not verify==1:
-                st.markdown("""
-        <script>
-            alert("This is not done correctly!...");
-        </script>
-    """, unsafe_allow_html=True)
-                return
+        if verify_otp(secret, otp):
             st.session_state.multifactor = 1
             _, role, name = get_user_details(user_id)
             st.session_state.id=user_id
@@ -448,7 +440,7 @@ def otp_verification_page():
 
     otp = st.text_input("Enter OTP", type="password")
     if st.button("Verify"):
-        if not  verify_otp(secret, otp):
+        if   verify_otp(secret, otp):
             st.success("OTP Verified! Welcome.")
             
             if role == "student":
@@ -549,7 +541,7 @@ def change_pass(password,user_id):
 def welcome_page():
     st.set_page_config(page_title="Anjac_AI", layout="wide")
     secret, role, name = get_user_details(st.session_state.user_id)
-
+    update_multifactor_status(st.session_state.user_id, st.session_state.multifactor ,secret)  # Update MFA status in the database
     # Sidebar content
     with st.sidebar:
         st.header("Chat History")
@@ -693,7 +685,7 @@ def welcome_page():
 def admin_page():
     st.set_page_config(page_title="Admin Dashboard", layout="wide")
     secret, role, name = get_user_details(st.session_state.user_id)
-
+    update_multifactor_status(st.session_state.user_id, st.session_state.multifactor ,secret)  # Update MFA status in the database
     # Sidebar content
     with st.sidebar:
         st.header("Admin Modules")
