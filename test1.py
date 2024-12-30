@@ -1051,7 +1051,7 @@ def admin_page():
                     class_name = st.selectbox("Class:", ["I", "II", "III"])
                 
                 if st.button("Add Timetable"):
-                    if timetable_id and day and time and subject:
+                    if  day and time and subject:
                         add_timetable( day, time, subject, selected_department_id)
                         st.success(f"Timetable for '{day} at {time}' added to Department ID {selected_department_id}!")
                     else:
