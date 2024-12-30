@@ -968,12 +968,16 @@ def admin_page():
         def add_timetable(day, time, subject,class_name, department_id):
             conn = create_connection()
             cursor = conn.cursor()
-            cursor.execute("""
+            try:
+                cursor.execute("""
             INSERT INTO timetable (day, time, subject, department_id,class)
             VALUES (?, ?, ?, ?,?);
             """, ( day, time, subject, department_id,class_name))
             conn.commit()
-            conn.close()
+            except:
+                st.error("error")
+            finally:
+                conn.close()
         
         # Insert data into the subject table
         def add_subject(subject_id, name, code, department_id):
