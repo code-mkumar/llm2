@@ -895,7 +895,7 @@ def admin_page():
                 # Create Timetable table
                 cursor.execute("""
                 CREATE TABLE IF NOT EXISTS timetable (
-                    timetable_id TEXT PRIMARY KEY AUTOINCREMENT,
+                    timetable_id INTEGER PRIMARY KEY AUTOINCREMENT,
                     day TEXT,
                     time TEXT,
                     subject TEXT,
