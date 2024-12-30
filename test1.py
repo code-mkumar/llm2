@@ -1037,7 +1037,7 @@ def admin_page():
         
             # Add Timetable to the selected department
             with st.expander("Add Timetable to Selected Department"):
-                timetable_id = st.text_input("Time Table Id:")
+                # timetable_id = st.text_input("Time Table Id:")
                 day = st.text_input("Day:")
                 time = st.text_input("Time:")
                 subject = st.text_input("Subject:")
@@ -1049,7 +1049,7 @@ def admin_page():
                 
                 if st.button("Add Timetable"):
                     if timetable_id and day and time and subject:
-                        add_timetable(timetable_id, day, time, subject, selected_department_id)
+                        add_timetable( day, time, subject, selected_department_id)
                         st.success(f"Timetable for '{day} at {time}' added to Department ID {selected_department_id}!")
                     else:
                         st.error("Please fill all the fields.")
