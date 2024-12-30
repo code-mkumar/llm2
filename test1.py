@@ -973,7 +973,7 @@ def admin_page():
             INSERT INTO timetable (day, time, subject, department_id,class)
             VALUES (?, ?, ?, ?,?);
             """, ( day, time, subject, department_id,class_name))
-            conn.commit()
+                conn.commit()
             except:
                 st.error("error")
             finally:
