@@ -1038,8 +1038,11 @@ def admin_page():
             # Add Timetable to the selected department
             with st.expander("Add Timetable to Selected Department"):
                 # timetable_id = st.text_input("Time Table Id:")
-                day = st.text_input("Day:")
-                time = st.text_input("Time:")
+                day = st.selectbox("day:",["monday","tuesday","wednesday","thursday","friday","saturday"])
+                if day =="saturday":
+                    time = st.selectbox("Time:",["9.00-9.45","9.45-10.30","10.30-11.15","11.20-12.10","12.10-1.00"])
+                else:
+                    time = st.selectbox("Time:",["10-11","11-12","12-1","2-3","3-4","4-5"])
                 subject = st.text_input("Subject:")
         
                 if graduate_level == "PG": 
