@@ -1085,10 +1085,7 @@ def admin_page():
 
     elif module == "Query Area":
         st.subheader("Query Area Module")
-        query = st.text_area("Enter your SQL query")
-        if st.button("Execute Query"):
-            # Add query execution logic here
-            st.success(f"Executed query: {query}")
+        
     elif module == "admin data":
         st.subheader("admin")
         admin_id = st.text_input("enter the admin ID")
