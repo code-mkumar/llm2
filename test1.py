@@ -965,7 +965,7 @@ def admin_page():
             conn.close()
         
         # Insert data into the timetable table
-        def add_timetable(day, time, subject, department_id,class_name):
+        def add_timetable(day, time, subject,class_name, department_id):
             conn = create_connection()
             cursor = conn.cursor()
             cursor.execute("""
@@ -1052,7 +1052,7 @@ def admin_page():
                 
                 if st.button("Add Timetable"):
                     if  day and time and subject:
-                        add_timetable( day, time, subject, selected_department_id)
+                        add_timetable(day, time, subject,class_name, selected_department_id)
                         st.success(f"Timetable for '{day} at {time}' added to Department ID {selected_department_id}!")
                     else:
                         st.error("Please fill all the fields.")
