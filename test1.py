@@ -1094,7 +1094,7 @@ def admin_page():
         def fetch_department_details():
             conn = create_connection()
             cursor = conn.cursor()
-            cursor.execute("SELECT department_id, department_name FROM department")
+            cursor.execute("SELECT department_id, name FROM department")
             data = cursor.fetchall()
             conn.close()
             return data
