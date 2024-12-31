@@ -1084,7 +1084,96 @@ def admin_page():
 
 
     elif module == "Query Area":
-        st.subheader("Query Area Module")
+        import pandas as pd
+
+        st.title("View Section")
+        st.subheader("View Data by ID")
+
+            # SQLite connection function
+        def create_connection():
+            return sqlite3.connect("dynamic_department.db")
+
+            # Fetch department details by department ID
+        def fetch_department_details(department_id):
+            conn = create_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM department WHERE department_id = ?", (department_id,))
+            data = cursor.fetchall()
+            columns = [description[0] for description in cursor.description]
+            conn.close()
+            return data, columns
+
+            # Fetch staff details by department ID and staff ID
+        def fetch_staff_details(department_id, staff_id):
+            conn = create_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM staff WHERE department_id = ? AND staff_id = ?", (department_id, staff_id))
+            data = cursor.fetchall()
+            columns = [description[0] for description in cursor.description]
+            conn.close()
+            return data, columns
+
+            # Fetch timetable for a selected department ID
+        def fetch_timetable(department_id):
+            conn = create_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM timetable WHERE department_id = ?", (department_id,))
+            data = cursor.fetchall()
+            columns = [description[0] for description in cursor.description]
+            conn.close()
+            return data, columns
+
+            # Fetch subject details for a selected department ID
+        def fetch_subject_details(department_id):
+            conn = create_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM subject WHERE department_id = ?", (department_id,))
+            data = cursor.fetchall()
+            columns = [description[0] for description in cursor.description]
+            conn.close()
+            return data, columns
+
+            # Input fields for department ID
+        department_id = st.number_input("Enter Department ID", min_value=1, step=1)
+
+            # View Department Details
+        if st.button("View Department Details"):
+            data, columns = fetch_department_details(department_id)
+            if data:
+                st.write(f"Department Details for Department ID: {department_id}")
+                st.dataframe(pd.DataFrame(data, columns=columns))
+            else:
+                st.warning(f"No department found with ID {department_id}.")
+
+            # Input field for staff ID
+        staff_id = st.number_input("Enter Staff ID", min_value=1, step=1)
+
+            # View Staff Details
+        if st.button("View Staff Details"):
+            data, columns = fetch_staff_details(department_id, staff_id)
+            if data:
+                st.write(f"Staff Details for Staff ID: {staff_id} in Department ID: {department_id}")
+                st.dataframe(pd.DataFrame(data, columns=columns))
+            else:
+                st.warning(f"No staff found with ID {staff_id} in Department ID {department_id}.")
+
+            # View Timetable Details
+        if st.button("View Timetable Details"):
+            data, columns = fetch_timetable(department_id)
+            if data:
+                st.write(f"Timetable for Department ID: {department_id}")
+                st.dataframe(pd.DataFrame(data, columns=columns))
+            else:
+                st.warning(f"No timetable found for Department ID {department_id}.")
+
+            # View Subject Details
+        if st.button("View Subject Details"):
+            data, columns = fetch_subject_details(department_id)
+            if data:
+                st.write(f"Subject Details for Department ID: {department_id}")
+                st.dataframe(pd.DataFrame(data, columns=columns))
+            else:
+                st.warning(f"No subjects found for Department ID {department_id}.")
         
     elif module == "admin data":
         st.subheader("admin")
