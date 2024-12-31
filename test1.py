@@ -1077,7 +1077,7 @@ def admin_page():
                 subject_code = st.text_input("Subject Code:")
                 
                 if st.button("Add Subject"):
-                    if subject_id and subject_name and subject_code:
+                    if subject_name and subject_code:
                         add_subject(subject_name, subject_code, selected_department_id)
                         st.success(f"Subject '{subject_name}' added to Department ID {selected_department_id}!")
                     else:
