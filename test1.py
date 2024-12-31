@@ -908,7 +908,7 @@ def admin_page():
                 # Create Subject table
                 cursor.execute("""
                 CREATE TABLE IF NOT EXISTS subject (
-                    subject_id TEXT PRIMARY KEY,
+                    subject_id TEXT PRIMARY KEY AUTOINCREMENT ,
                     name TEXT,
                     code TEXT,
                     department_id INTEGER,
@@ -980,13 +980,13 @@ def admin_page():
                 conn.close()
         
         # Insert data into the subject table
-        def add_subject(subject_id, name, code, department_id):
+        def add_subject( name, code, department_id):
             conn = create_connection()
             cursor = conn.cursor()
             cursor.execute("""
-            INSERT INTO subject (subject_id, name, code, department_id)
-            VALUES (?, ?, ?, ?);
-            """, (subject_id, name, code, department_id))
+            INSERT INTO subject ( name, code, department_id)
+            VALUES ( ?, ?, ?);
+            """, ( name, code, department_id))
             conn.commit()
             conn.close()
         
@@ -1071,13 +1071,13 @@ def admin_page():
         
             # Add Subject to the selected department
             with st.expander("Add Subject to Selected Department"):
-                subject_id = st.text_input("Subject Id:")
+               
                 subject_name = st.text_input("Subject Name:")
                 subject_code = st.text_input("Subject Code:")
                 
                 if st.button("Add Subject"):
                     if subject_id and subject_name and subject_code:
-                        add_subject(subject_id, subject_name, subject_code, selected_department_id)
+                        add_subject(subject_name, subject_code, selected_department_id)
                         st.success(f"Subject '{subject_name}' added to Department ID {selected_department_id}!")
                     else:
                         st.error("Please fill all the fields.")
