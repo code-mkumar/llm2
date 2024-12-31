@@ -1113,7 +1113,7 @@ def admin_page():
         def fetch_timetable(department_id, class_name):
             conn = create_connection()
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM timetable WHERE department_id = ? AND class_name = ?", (department_id, class_name))
+            cursor.execute("SELECT * FROM timetable WHERE department_id = ? AND class = ?", (department_id, class_name))
             data = cursor.fetchall()
             columns = [description[0] for description in cursor.description]
             conn.close()
