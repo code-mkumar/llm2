@@ -1178,8 +1178,9 @@ def admin_page():
         
         # Display and edit department details
         st.subheader("Department Details")
-        department_data = pd.DataFrame(departments, columns=department_columns)
-        st.dataframe(department_data)
+         if st.button("View Department Details"):
+            st.write(f"Details for Department: {department_name} (ID: {department_id})")
+            st.write(f"Department ID: {department_id}, Name: {department_name}")
         
         if st.checkbox("Edit Department Details"):
             new_name = st.text_input("New Department Name", value=department_name)
@@ -1206,7 +1207,7 @@ def admin_page():
                 for column in staff_columns:
                     if column != "staff_id":
                         new_value = st.text_input(f"Update {column}", value=selected_staff[column].values[0])
-                        if st.form_submit_button("Update Staff"):
+                        if st.form_submit_button("Update Staff" ,key="staff"):
                             update_record("staff", {column: new_value}, {"staff_id": staff_id})
                             st.success("Staff updated successfully.")
         
