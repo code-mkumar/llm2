@@ -1138,7 +1138,7 @@ def admin_page():
             columns = [description[0] for description in cursor.description]
             conn.close()
             return data, columns
-        data, columns = fetch_departments()
+        data = fetch_departments()
         department_id = st.selectbox("select the department",data)
 
             # View Department Details
