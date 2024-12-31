@@ -1097,7 +1097,7 @@ def admin_page():
         def fetch_department_details(department_id):
             conn = create_connection()
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM department WHERE department_id = ?", (department_id,))
+            cursor.execute("SELECT department_id FROM department")
             data = cursor.fetchall()
             columns = [description[0] for description in cursor.description]
             conn.close()
@@ -1107,7 +1107,7 @@ def admin_page():
         def fetch_staff_details(department_id, staff_id):
             conn = create_connection()
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM staff WHERE department_id = ? AND staff_id = ?", (department_id, staff_id))
+            cursor.execute("SELECT * FROM staff WHERE department_id = ?", (department_id))
             data = cursor.fetchall()
             columns = [description[0] for description in cursor.description]
             conn.close()
