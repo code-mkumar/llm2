@@ -1214,14 +1214,20 @@ def admin_page():
             st.warning("No staff found for this department.")
         
         # Fetch and display timetable
+       # Fetch and display timetable
         st.subheader("Timetable Details")
         timetable_data = fetch_timetable(department_id)
         if timetable_data:
             timetable_df = pd.DataFrame(timetable_data, columns=["Day", "Time", "Subject"])
-            pivot_table = timetable_df.pivot_table(index="Time", columns="Day", values="Subject")
-            st.write(pivot_table)  # Use st.write instead of st.pivot
+            
+            # Group by Time and Day, then unstack to reshape
+            timetable_df_grouped = timetable_df.groupby(['Time', 'Day'])['Subject'].first().unstack(fill_value="No Subject")
+            
+            # Display the reshaped timetable
+            st.table(timetable_df_grouped)
         else:
             st.warning("No timetable found for this department.")
+
         
         # Subject details
         st.subheader("Subject Details")
