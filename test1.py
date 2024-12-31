@@ -1187,16 +1187,25 @@ def admin_page():
             staff_id = st.selectbox("Select Staff ID to Edit", staff_df["staff_id"])
             selected_staff = staff_df[staff_df["staff_id"] == staff_id]
         
+           # Inside the form for updating staff details
             with st.form("Edit Staff"):
+                # Iterate over the columns except "staff_id" for editable fields
                 for column in staff_columns:
                     if column != "staff_id":
                         # For columns that should use a select box
                         options = selected_staff[column].unique().tolist()  # Assuming the column contains categorical data
                         new_value = st.selectbox(f"Update {column}", options=options, index=options.index(selected_staff[column].values[0]) if selected_staff[column].values[0] in options else 0)
-        
-                if st.form_submit_button("Update Staff", key="staff_update_details"):
-                    update_record("staff", {column: new_value}, {"staff_id": staff_id})
-                    st.success("Staff updated successfully.")
+            
+                # Submit button for the form
+                submit_button = st.form_submit_button(label="Update Staff")
+            
+            # Check if the submit button is pressed
+            if submit_button:
+                # For each field in the form, update the record
+                updates = {column: new_value}  # You may need to handle more columns if updating multiple fields
+                update_record("staff", updates, {"staff_id": staff_id})
+                st.success("Staff updated successfully.")
+
         
             if st.button("Delete Staff"):
                 delete_record("staff", {"staff_id": staff_id})
