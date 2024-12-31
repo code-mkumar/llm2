@@ -1191,7 +1191,7 @@ def admin_page():
             data, columns = fetch_timetable(department_id, class_name)
             if data:
                 st.write(f"Timetable for Class {class_name} in Department: {department_name}")
-                st.dataframe(pd.DataFrame(data, columns=columns))
+                # st.dataframe(pd.DataFrame(data, columns=columns))
                 st.table(data)
             else:
                 st.warning(f"No timetable found for Class {class_name} in Department: {department_name}")
