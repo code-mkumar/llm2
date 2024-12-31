@@ -1221,7 +1221,7 @@ def admin_page():
             timetable_df = pd.DataFrame(timetable_data, columns=["Day", "Time", "Subject"])
             
             # Group by Time and Day, then unstack to reshape
-            timetable_df_grouped = timetable_df.groupby(['Time', 'Day'])['Subject'].first().unstack(fill_value="No Subject")
+            timetable_df_grouped = timetable_df.groupby(['Day', 'Time'])['Subject'].first().unstack(fill_value="No Subject")
             
             # Display the reshaped timetable
             st.table(timetable_df_grouped)
