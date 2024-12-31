@@ -1087,6 +1087,7 @@ def admin_page():
         import pandas as pd
 
         st.title("View Section")
+
         def create_connection():
             return sqlite3.connect("dynamic_department.db")
         
@@ -1139,7 +1140,6 @@ def admin_page():
             cursor.execute(f"DELETE FROM {table} WHERE {condition_clause}", values)
             conn.commit()
             conn.close()
-
         
         # Fetch subject details
         def fetch_subject_details(department_id):
@@ -1151,24 +1151,8 @@ def admin_page():
             conn.close()
             return data, columns
         
-        # # Update a record
-        # def update_record(table, column, value, condition_column, condition_value):
-        #     conn = create_connection()
-        #     cursor = conn.cursor()
-        #     cursor.execute(f"UPDATE {table} SET {column} = ? WHERE {condition_column} = ?", (value, condition_value))
-        #     conn.commit()
-        #     conn.close()
-        
-        # # Delete a record
-        # def delete_record(table, condition_column, condition_value):
-        #     conn = create_connection()
-        #     cursor = conn.cursor()
-        #     cursor.execute(f"DELETE FROM {table} WHERE {condition_column} = ?", (condition_value,))
-        #     conn.commit()
-        #     conn.close()
-        
         st.title("Dynamic Department Viewer")
-
+        
         # Fetch department details
         departments, department_columns = fetch_department_details()
         department_dict = {row[1]: row[0] for row in departments}
@@ -1203,17 +1187,16 @@ def admin_page():
             staff_id = st.selectbox("Select Staff ID to Edit", staff_df["staff_id"])
             selected_staff = staff_df[staff_df["staff_id"] == staff_id]
         
-           
-            # with st.form("Edit Staff"):
-            #     for column in staff_columns:
-            #         if column != "staff_id":
-            #             # For columns that should use a select box
-            #             options = selected_staff[column].unique().tolist()  # Assuming the column contains categorical data
-            #             new_value = st.selectbox(f"Update {column}", options=options, index=options.index(selected_staff[column].values[0]) if selected_staff[column].values[0] in options else 0)
-            
-            #             if st.form_submit_button("Update Staff", key="staff_update_details"):
-            #                 update_record("staff", {column: new_value}, {"staff_id": staff_id})
-            #                 st.success("Staff updated successfully.")
+            with st.form("Edit Staff"):
+                for column in staff_columns:
+                    if column != "staff_id":
+                        # For columns that should use a select box
+                        options = selected_staff[column].unique().tolist()  # Assuming the column contains categorical data
+                        new_value = st.selectbox(f"Update {column}", options=options, index=options.index(selected_staff[column].values[0]) if selected_staff[column].values[0] in options else 0)
+        
+                if st.form_submit_button("Update Staff", key="staff_update_details"):
+                    update_record("staff", {column: new_value}, {"staff_id": staff_id})
+                    st.success("Staff updated successfully.")
         
             if st.button("Delete Staff"):
                 delete_record("staff", {"staff_id": staff_id})
@@ -1226,11 +1209,10 @@ def admin_page():
         timetable_data = fetch_timetable(department_id)
         if timetable_data:
             timetable_df = pd.DataFrame(timetable_data, columns=["Day", "Time", "Subject"])
-            # pivot_table = timetable_df.pivot(index="Time", columns="Day", values="Subject")
-            # st.table(pivot_table)
+            pivot_table = timetable_df.pivot(index="Time", columns="Day", values="Subject")
+            st.write(pivot_table)  # Use st.write instead of st.pivot
         else:
             st.warning("No timetable found for this department.")
-
         
         # Subject details
         st.subheader("Subject Details")
@@ -1248,15 +1230,15 @@ def admin_page():
             column_name = st.selectbox("Select column to update", columns)
             subject_id = st.number_input("Enter Subject ID", min_value=1, step=1)
             if st.button("Update Subject"):
-                update_record("subject", column_name, new_value, "subject_id", subject_id)
+                update_record("subject", {column_name: new_value}, {"subject_id": subject_id})
                 st.success("Subject details updated successfully.")
         
         if st.checkbox("Delete Subject"):
             subject_id = st.number_input("Enter Subject ID for deletion", min_value=1, step=1)
             if st.button("Delete Subject"):
-                delete_record("subject", "subject_id", subject_id)
+                delete_record("subject", {"subject_id": subject_id})
                 st.success("Subject deleted successfully.")
-        
+                
     elif module == "admin data":
         st.subheader("admin")
         admin_id = st.text_input("enter the admin ID")
