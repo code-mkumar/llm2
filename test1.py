@@ -1163,7 +1163,6 @@ def admin_page():
         
         # Staff details
         st.subheader("Staff Details")
-        staff_id = st.number_input("Enter Staff ID", min_value=1, step=1)
         if st.button("View Staff Details"):
             data, columns = fetch_staff_details(department_id)
             if data:
