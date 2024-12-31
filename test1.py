@@ -1218,7 +1218,7 @@ def admin_page():
         timetable_data = fetch_timetable(department_id)
         if timetable_data:
             timetable_df = pd.DataFrame(timetable_data, columns=["Day", "Time", "Subject"])
-            pivot_table = timetable_df.pivot(index="Time", columns="Day", values="Subject")
+            pivot_table = timetable_df.pivot_table(index="Time", columns="Day", values="Subject")
             st.write(pivot_table)  # Use st.write instead of st.pivot
         else:
             st.warning("No timetable found for this department.")
