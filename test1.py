@@ -1178,7 +1178,7 @@ def admin_page():
         
         # Display and edit department details
         st.subheader("Department Details")
-         if st.button("View Department Details"):
+        if st.button("View Department Details"):
             st.write(f"Details for Department: {department_name} (ID: {department_id})")
             st.write(f"Department ID: {department_id}, Name: {department_name}")
         
