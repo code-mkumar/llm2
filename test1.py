@@ -1192,6 +1192,7 @@ def admin_page():
             if data:
                 st.write(f"Timetable for Class {class_name} in Department: {department_name}")
                 st.dataframe(pd.DataFrame(data, columns=columns))
+                st.table(data)
             else:
                 st.warning(f"No timetable found for Class {class_name} in Department: {department_name}")
         
