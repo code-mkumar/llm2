@@ -1207,7 +1207,7 @@ def admin_page():
                 for column in staff_columns:
                     if column != "staff_id":
                         new_value = st.text_input(f"Update {column}", value=selected_staff[column].values[0])
-                        if st.form_submit_button("Update Staff" ):
+                        if st.form_submit_button("Update Staff" ,key="staff_update_detials" ):
                             update_record("staff", {column: new_value}, {"staff_id": staff_id})
                             st.success("Staff updated successfully.")
         
