@@ -1204,16 +1204,16 @@ def admin_page():
             selected_staff = staff_df[staff_df["staff_id"] == staff_id]
         
            
-            with st.form("Edit Staff"):
-                for column in staff_columns:
-                    if column != "staff_id":
-                        # For columns that should use a select box
-                        options = selected_staff[column].unique().tolist()  # Assuming the column contains categorical data
-                        new_value = st.selectbox(f"Update {column}", options=options, index=options.index(selected_staff[column].values[0]) if selected_staff[column].values[0] in options else 0)
+            # with st.form("Edit Staff"):
+            #     for column in staff_columns:
+            #         if column != "staff_id":
+            #             # For columns that should use a select box
+            #             options = selected_staff[column].unique().tolist()  # Assuming the column contains categorical data
+            #             new_value = st.selectbox(f"Update {column}", options=options, index=options.index(selected_staff[column].values[0]) if selected_staff[column].values[0] in options else 0)
             
-                        if st.form_submit_button("Update Staff", key="staff_update_details"):
-                            update_record("staff", {column: new_value}, {"staff_id": staff_id})
-                            st.success("Staff updated successfully.")
+            #             if st.form_submit_button("Update Staff", key="staff_update_details"):
+            #                 update_record("staff", {column: new_value}, {"staff_id": staff_id})
+            #                 st.success("Staff updated successfully.")
         
             if st.button("Delete Staff"):
                 delete_record("staff", {"staff_id": staff_id})
