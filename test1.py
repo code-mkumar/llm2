@@ -1089,15 +1089,16 @@ def admin_page():
         st.title("View Section")
         def create_connection():
             return sqlite3.connect("dynamic_department.db")
-
+        
         # Fetch department details
         def fetch_department_details():
             conn = create_connection()
             cursor = conn.cursor()
-            cursor.execute("SELECT department_id, name FROM department")
+            cursor.execute("SELECT * FROM department")
             data = cursor.fetchall()
+            columns = [description[0] for description in cursor.description]
             conn.close()
-            return data
+            return data, columns
         
         # Fetch staff details
         def fetch_staff_details(department_id):
@@ -1110,14 +1111,35 @@ def admin_page():
             return data, columns
         
         # Fetch timetable
-        def fetch_timetable(department_id, class_name):
+        def fetch_timetable(department_id):
             conn = create_connection()
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM timetable WHERE department_id = ? AND class = ?", (department_id, class_name))
+            cursor.execute("SELECT day, time, subject FROM timetable WHERE department_id = ?", (department_id,))
             data = cursor.fetchall()
-            columns = [description[0] for description in cursor.description]
             conn.close()
-            return data, columns
+            return data
+        
+        # Update a record
+        def update_record(table, updates, condition):
+            conn = create_connection()
+            cursor = conn.cursor()
+            set_clause = ", ".join([f"{column} = ?" for column in updates.keys()])
+            condition_clause = " AND ".join([f"{column} = ?" for column in condition.keys()])
+            values = list(updates.values()) + list(condition.values())
+            cursor.execute(f"UPDATE {table} SET {set_clause} WHERE {condition_clause}", values)
+            conn.commit()
+            conn.close()
+        
+        # Delete a record
+        def delete_record(table, condition):
+            conn = create_connection()
+            cursor = conn.cursor()
+            condition_clause = " AND ".join([f"{column} = ?" for column in condition.keys()])
+            values = list(condition.values())
+            cursor.execute(f"DELETE FROM {table} WHERE {condition_clause}", values)
+            conn.commit()
+            conn.close()
+
         
         # Fetch subject details
         def fetch_subject_details(department_id):
@@ -1129,72 +1151,81 @@ def admin_page():
             conn.close()
             return data, columns
         
-        # Update a record
-        def update_record(table, column, value, condition_column, condition_value):
-            conn = create_connection()
-            cursor = conn.cursor()
-            cursor.execute(f"UPDATE {table} SET {column} = ? WHERE {condition_column} = ?", (value, condition_value))
-            conn.commit()
-            conn.close()
+        # # Update a record
+        # def update_record(table, column, value, condition_column, condition_value):
+        #     conn = create_connection()
+        #     cursor = conn.cursor()
+        #     cursor.execute(f"UPDATE {table} SET {column} = ? WHERE {condition_column} = ?", (value, condition_value))
+        #     conn.commit()
+        #     conn.close()
         
-        # Delete a record
-        def delete_record(table, condition_column, condition_value):
-            conn = create_connection()
-            cursor = conn.cursor()
-            cursor.execute(f"DELETE FROM {table} WHERE {condition_column} = ?", (condition_value,))
-            conn.commit()
-            conn.close()
+        # # Delete a record
+        # def delete_record(table, condition_column, condition_value):
+        #     conn = create_connection()
+        #     cursor = conn.cursor()
+        #     cursor.execute(f"DELETE FROM {table} WHERE {condition_column} = ?", (condition_value,))
+        #     conn.commit()
+        #     conn.close()
         
         st.title("Dynamic Department Viewer")
-        st.subheader("Query Area")
+
+        # Fetch department details
+        departments, department_columns = fetch_department_details()
+        department_dict = {row[1]: row[0] for row in departments}
         
-        # Fetch departments for the dropdown
-        departments = fetch_department_details()
-        department_dict = {name: dept_id for dept_id, name in departments}
-        
-        # Department selection
         department_name = st.selectbox("Select Department", list(department_dict.keys()))
         department_id = department_dict[department_name]
         
-        # Display department details
-        if st.button("View Department Details"):
-            st.write(f"Details for Department: {department_name} (ID: {department_id})")
-            st.write(f"Department ID: {department_id}, Name: {department_name}")
+        # Display and edit department details
+        st.subheader("Department Details")
+        department_data = pd.DataFrame(departments, columns=department_columns)
+        st.dataframe(department_data)
         
-        # Staff details
+        if st.checkbox("Edit Department Details"):
+            new_name = st.text_input("New Department Name", value=department_name)
+            if st.button("Update Department"):
+                update_record("department", {"name": new_name}, {"department_id": department_id})
+                st.success("Department updated successfully.")
+        
+        if st.checkbox("Delete Department"):
+            if st.button("Delete Department"):
+                delete_record("department", {"department_id": department_id})
+                st.success("Department deleted successfully.")
+        
+        # Fetch and edit staff details
         st.subheader("Staff Details")
-        if st.button("View Staff Details"):
-            data, columns = fetch_staff_details(department_id)
-            if data:
-                st.write(f"Staff Details for Department: {department_name}")
-                st.dataframe(pd.DataFrame(data, columns=columns))
-            else:
-                st.warning(f"No staff details found for Department: {department_name}")
+        staff_data, staff_columns = fetch_staff_details(department_id)
+        if staff_data:
+            staff_df = pd.DataFrame(staff_data, columns=staff_columns)
+            st.dataframe(staff_df)
         
-        # Update/Delete staff
-        if st.checkbox("Update Staff"):
-            new_value = st.text_input("Enter new value")
-            column_name = st.selectbox("Select column to update", columns)
-            if st.button("Update Staff"):
-                update_record("staff", column_name, new_value, "staff_id", staff_id)
-                st.success("Staff details updated successfully.")
+            staff_id = st.selectbox("Select Staff ID to Edit", staff_df["staff_id"])
+            selected_staff = staff_df[staff_df["staff_id"] == staff_id]
         
-        if st.checkbox("Delete Staff"):
+            with st.form("Edit Staff"):
+                for column in staff_columns:
+                    if column != "staff_id":
+                        new_value = st.text_input(f"Update {column}", value=selected_staff[column].values[0])
+                        if st.form_submit_button("Update Staff"):
+                            update_record("staff", {column: new_value}, {"staff_id": staff_id})
+                            st.success("Staff updated successfully.")
+        
             if st.button("Delete Staff"):
-                delete_record("staff", "staff_id", staff_id)
+                delete_record("staff", {"staff_id": staff_id})
                 st.success("Staff deleted successfully.")
+        else:
+            st.warning("No staff found for this department.")
         
-        # Timetable details
+        # Fetch and display timetable
         st.subheader("Timetable Details")
-        class_name = st.selectbox("Select Class", ["I", "II", "III"])
-        if st.button("View Timetable Details"):
-            data, columns = fetch_timetable(department_id, class_name)
-            if data:
-                st.write(f"Timetable for Class {class_name} in Department: {department_name}")
-                # st.dataframe(pd.DataFrame(data, columns=columns))
-                st.table(data)
-            else:
-                st.warning(f"No timetable found for Class {class_name} in Department: {department_name}")
+        timetable_data = fetch_timetable(department_id)
+        if timetable_data:
+            timetable_df = pd.DataFrame(timetable_data, columns=["Day", "Time", "Subject"])
+            pivot_table = timetable_df.pivot(index="Time", columns="Day", values="Subject")
+            st.table(pivot_table)
+        else:
+            st.warning("No timetable found for this department.")
+
         
         # Subject details
         st.subheader("Subject Details")
