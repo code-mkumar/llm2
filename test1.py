@@ -1137,11 +1137,7 @@ def admin_page():
 
             # View Department Details
         if st.button("View Department Details"):
-            
-                st.dataframe(pd.DataFrame(data, columns=columns))
-            else:
-                st.warning(f"No department found with ID {department_id}.")
-
+            pass
             # Input field for staff ID
         staff_id = st.number_input("Enter Staff ID", min_value=1, step=1)
 
