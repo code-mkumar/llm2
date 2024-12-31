@@ -1094,7 +1094,7 @@ def admin_page():
             return sqlite3.connect("dynamic_department.db")
 
             # Fetch department details by department ID
-        def fetch_department_details(department_id):
+        def fetch_department_details():
             conn = create_connection()
             cursor = conn.cursor()
             cursor.execute("SELECT department_id FROM department")
