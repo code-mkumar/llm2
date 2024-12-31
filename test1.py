@@ -1132,15 +1132,12 @@ def admin_page():
             columns = [description[0] for description in cursor.description]
             conn.close()
             return data, columns
-
-            # Input fields for department ID
-        department_id = st.number_input("Enter Department ID", min_value=1, step=1)
+        data, columns = fetch_department_details()
+        department_id = st.selectbox("select the department",data)
 
             # View Department Details
         if st.button("View Department Details"):
-            data, columns = fetch_department_details(department_id)
-            if data:
-                st.write(f"Department Details for Department ID: {department_id}")
+            
                 st.dataframe(pd.DataFrame(data, columns=columns))
             else:
                 st.warning(f"No department found with ID {department_id}.")
