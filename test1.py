@@ -182,7 +182,8 @@ def guest_page():
             st.session_state.input = ""
 
         # Input field for the user's question
-        st.text_area('Input your question:', key='input', on_change=process_and_clear)
+        #st.text_area('Input your question:', key='input', on_change=process_and_clear)
+        st.chat_input('Input your question')
         question = st.session_state.stored_value
 
         if question:
